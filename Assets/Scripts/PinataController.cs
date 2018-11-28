@@ -51,7 +51,7 @@ public class PinataController : MonoBehaviour {
                 
                 Destroy(t.gameObject);
                 //other.isTrigger = false;
-                GameController.Instance.SpawnCandy(20, transform.position);                
+                GameController.Instance.SpawnCandy(20, transform.position, 0.77f);                
             }
         }
     }

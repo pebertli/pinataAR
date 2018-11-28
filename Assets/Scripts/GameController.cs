@@ -110,9 +110,9 @@ public class GameController : MonoBehaviour {
 
     }
 
-    public void SpawnCandy(int amount, Vector3 position)
+    public void SpawnCandy(int amount, Vector3 position, float spread)
     {
-        CandyController.SpawnCandy(amount, position);
+        CandyController.SpawnCandy(amount, position, spread);
     }
 
         public void RestartPinata()

@@ -6,7 +6,7 @@ public class StarCandyController : MonoBehaviour {
 
     public GameObject player;
     public GameObject floor;
-    public GameObject[] candy;
+    public GameObject[] candy;    
     public int maxPick = 3;
 
     Vector3 nextPosition;
@@ -64,6 +64,8 @@ public class StarCandyController : MonoBehaviour {
     public void Damage(int power)
     {
         maxPick -= power;
+
+        GameController.Instance.SpawnCandy(10, this.transform.position, 0.1f);
 
         if (maxPick <= 0)
             Destroy();
