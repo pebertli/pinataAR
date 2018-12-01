@@ -35,8 +35,7 @@ namespace UnityStandardAssets.Utility
             while (Time.time < stopTime && !m_EarlyStop)
             {
                 yield return null;
-            }
-            Debug.Log("stopping " + name);
+            }            
 
             // turn off emission
             foreach (var system in systems)

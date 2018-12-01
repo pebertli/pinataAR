@@ -65,14 +65,17 @@ public class GameController : MonoBehaviour {
 
     private GameState state;
     public PlayerTool Tool;
+    public float Score;
 
     public PlayerController player;
     public PinataController pinata;    
     public GameObject PlaneGenerator;
     public GameObject PointCloud;
+    
 
     private  MenuController menu;
     private CandySpawnController CandyController;
+    private ScoreController ScoreController;
 
     private void Awake()
     {
@@ -90,6 +93,7 @@ public class GameController : MonoBehaviour {
     void Start () {
         menu = GetComponent<MenuController>();
         CandyController = GetComponent<CandySpawnController>();
+        ScoreController = GetComponent<ScoreController>();
 
         Tool = PlayerTool.Hand;
         State = GameState.SearchingFloor;
@@ -122,5 +126,10 @@ public class GameController : MonoBehaviour {
             pinata.Restart();
             CandyController.DestroyCandies();
         }
+    }
+
+    public void addScore(float score)
+    {
+        ScoreController.addScore(score);
     }
 }

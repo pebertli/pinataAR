@@ -30,7 +30,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4661281989035874
 Transform:
   m_ObjectHideFlags: 1
@@ -124,4 +124,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c590e4042e2ea40468cafd35337b56d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textBonus: {fileID: 1573023650190752, guid: 8f27acde1d1cac54f84485ee8e5ac009, type: 2}
+  textBonus: {fileID: 1051266638559350, guid: 8f27acde1d1cac54f84485ee8e5ac009, type: 2}
+  points: 10

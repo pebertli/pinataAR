@@ -231,6 +231,8 @@ GameObject:
   - component: {fileID: 132609791}
   - component: {fileID: 132609793}
   - component: {fileID: 132609794}
+  - component: {fileID: 132609795}
+  - component: {fileID: 132609796}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -250,6 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tool: 0
+  Score: 0
   player: {fileID: 1103776639}
   pinata: {fileID: 0}
   PlaneGenerator: {fileID: 2083512464}
@@ -299,6 +302,32 @@ MonoBehaviour:
   - {fileID: 1979478809060208, guid: 9709b6b36a4f58f45a4e85b266cb7781, type: 2}
   - {fileID: 1911648078558312, guid: a6153d34e4e08344cbada5335e2a31c2, type: 2}
   - {fileID: 1521255128790928, guid: ca3468ca73bbaa2449b618584f0e796b, type: 2}
+--- !u!114 &132609795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 132609790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5fa1d5db159fc84e8d06c92fbff48b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 643064437}
+  timer: 30
+--- !u!114 &132609796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 132609790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c14d1120e5b4374e9567b4dfcf14a1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 175528056}
+  Score: 0
 --- !u!1 &156551991
 GameObject:
   m_ObjectHideFlags: 0
@@ -1025,7 +1054,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 30
+  m_text: 00:00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -1090,13 +1119,13 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -7.515896, w: 0}
+  m_margin: {x: 0, y: 0, z: -59.013546, w: 0}
   m_textInfo:
     textComponent: {fileID: 643064439}
-    characterCount: 2
+    characterCount: 5
     spriteCount: 0
     spaceCount: 0
-    wordCount: 1
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -2362,14 +2391,6 @@ Prefab:
     - target: {fileID: 4661281989035874, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 2}
       propertyPath: m_RootOrder
       value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 1678697948264560, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 2}
-      propertyPath: m_Name
-      value: candy1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1678697948264560, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 2}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 2}

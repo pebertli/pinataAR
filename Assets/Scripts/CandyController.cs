@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CandyController : MonoBehaviour {
 
     Renderer render;
+    TextMeshPro text;
 
     public GameObject textBonus;
+    public int points;
+
+
 
 	// Use this for initialization
 	void Start () {
-        render = GetComponent<Renderer>();
+        render = GetComponent<Renderer>();        
 	}
 	
 	// Update is called once per frame
@@ -24,8 +29,12 @@ public class CandyController : MonoBehaviour {
         var lookPos = transform.position - Camera.main.transform.position ;
         lookPos.y = 0;
         var rotation = Quaternion.LookRotation(lookPos);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 1);     
-        Instantiate<GameObject>(textBonus, transform.position, rotation);
+        
+        
+        
+        GameObject g = Instantiate<GameObject>(textBonus, transform.position, rotation);
+        text = g.GetComponentInChildren<TextMeshPro>();
+        text.SetText(((int) points).ToString());
     }
 
     IEnumerator Fade()
