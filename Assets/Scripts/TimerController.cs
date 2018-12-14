@@ -20,9 +20,12 @@ public class TimerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        timer -= Time.deltaTime;
-        text.SetText(formatTime(timer));
-        if(timer <= 0f)
+        if (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            text.SetText(formatTime(timer));
+        }
+        else
             GameController.Instance.State = GameController.GameState.GameOver;
     }
 
