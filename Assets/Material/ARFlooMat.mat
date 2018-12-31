@@ -5,8 +5,9 @@ Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: New Material
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ARFlooMat
   m_Shader: {fileID: 4800000, guid: 9b6be8e204a4a244ba6d5bfe155945b2, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4

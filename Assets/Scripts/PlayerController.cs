@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour {
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 20.0f, 1 << 10 | 1 << 11))
+                if (Physics.Raycast(ray, out hit, 20.0f, 1 << 10 | 1 << 11 | 1 << 12))
                 {
                     if (hit.transform.gameObject.CompareTag("Candy"))
                     {
@@ -82,8 +82,10 @@ public class PlayerController : MonoBehaviour {
                         GameController.Instance.addScore(c.points);
                         c.Destroy();
                     }
-                    if (hit.transform.gameObject.CompareTag("StarCandy"))
+                    else if (hit.transform.gameObject.CompareTag("StarCandy"))
                         hit.transform.gameObject.GetComponent<StarCandyController>().Damage(1);
+                    else if (hit.transform.gameObject.CompareTag("BadCandy"))
+                        EventManager.TriggerEvent("Activate"+ hit.transform.gameObject.name);
                 }
             }
 
