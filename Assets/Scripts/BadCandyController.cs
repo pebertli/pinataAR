@@ -18,5 +18,7 @@ public class BadCandyController : MonoBehaviour
     public void Activate()
     {
         Debug.Log("Name: " + this.transform.gameObject.name);
+        SplatController splatController = GetComponent<SplatController>();
+        splatController.DoSplash(6);
     }
 }

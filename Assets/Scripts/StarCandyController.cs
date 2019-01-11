@@ -39,8 +39,9 @@ public class StarCandyController : MonoBehaviour {
             if (Vector3.Distance(player.transform.position, this.transform.position) < 3)
             {
                 Vector3 dir = new Vector3(player.transform.forward.normalized.x*Random.Range(-1,1),0, player.transform.forward.normalized.z * Random.Range(-1, 1)) ;
+                //float y = 
                 nextPosition = (this.transform.position + (dir.normalized*3));               
-                nextPosition.y = floor.transform.position.y;
+                //nextPosition.y = floor.transform.position.y;
                 moving = true;
 
             }
