@@ -55,9 +55,9 @@ public class SplatController : MonoBehaviour
             color.a -= 0.001f;
             renderer.color = color;
 
-            Vector3 pos = splatTransform.position;
+            Vector3 pos = splatTransform.localPosition;
             pos.y -= 0.001f;
-            splatTransform.position = pos;            
+            splatTransform.localPosition = pos;            
 
 
             yield return new WaitForSeconds(0.005f);
@@ -66,7 +66,7 @@ public class SplatController : MonoBehaviour
 
     void NewSplat()
     {
-        GameObject newSplat = Instantiate<GameObject>(splat[Random.Range(0, 3)]);
+        GameObject newSplat = Instantiate<GameObject>(splat[Random.Range(0, 3)], HUD.transform);
         SpriteRenderer render = newSplat.GetComponent<SpriteRenderer>();
         Color color = render.color;
         color.a = 0.9f;
@@ -74,13 +74,14 @@ public class SplatController : MonoBehaviour
         render.color = color;
         StartCoroutine(UpdateSplats(newSplat.transform, render));
 
+        //newSplat.transform.parent = HUD.transform;
+        newSplat.transform.Translate(new Vector3(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 0));
         newSplat.transform.Rotate(Vector3.forward, Random.Range(0, 360));
-        //newSplat.transform.Translate(new Vector3(Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 0));
-        Vector3 pos = pointInWorld(new Vector2(Random.Range(0.42f, 0.58f), Random.Range(0.42f, 0.58f)));
-        newSplat.transform.position = new Vector3(pos.x, pos.y, HUD.transform.position.z);
+        
+        //Vector3 pos = pointInWorld(new Vector2(Random.Range(0.42f, 0.58f), Random.Range(0.42f, 0.58f)));
+        //newSplat.transform.position = new Vector3(pos.x, pos.y, HUD.transform.position.z);
         float s = Random.Range(0.05f, 0.35f);
         newSplat.transform.localScale = new Vector3(s, s, 1f);
-        newSplat.transform.parent = HUD.transform;
     }
 
     private Vector3 pointInWorld(Vector2 point)
