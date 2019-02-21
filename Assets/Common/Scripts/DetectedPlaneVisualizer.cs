@@ -93,7 +93,7 @@ namespace GoogleARCore.Examples.Common
                  m_MeshRenderer.enabled = false;
                  return;
             }
-
+            if(m_MeshRenderer != null)
             m_MeshRenderer.enabled = true;
 
             _UpdateMeshIfNeeded();
@@ -106,8 +106,11 @@ namespace GoogleARCore.Examples.Common
         public void Initialize(DetectedPlane plane)
         {
             m_DetectedPlane = plane;
-            m_MeshRenderer.material.SetColor("_GridColor", k_PlaneColors[s_PlaneCount++ % k_PlaneColors.Length]);
-            m_MeshRenderer.material.SetFloat("_UvRotation", Random.Range(0.0f, 360.0f));
+                if (m_MeshRenderer != null)
+            {
+                m_MeshRenderer.material.SetColor("_GridColor", k_PlaneColors[s_PlaneCount++ % k_PlaneColors.Length]);
+                m_MeshRenderer.material.SetFloat("_UvRotation", Random.Range(0.0f, 360.0f));
+            }
 
             Update();
         }
@@ -131,7 +134,8 @@ namespace GoogleARCore.Examples.Common
 
             Vector3 planeNormal = m_DetectedPlane.CenterPose.rotation * Vector3.up;
 
-            m_MeshRenderer.material.SetVector("_PlaneNormal", planeNormal);
+            if(m_MeshRenderer != null)
+                 m_MeshRenderer.material.SetVector("_PlaneNormal", planeNormal);
 
             int planePolygonCount = m_MeshVertices.Count;
 
@@ -203,10 +207,13 @@ namespace GoogleARCore.Examples.Common
                 m_MeshIndices.Add(innerVertex2);
             }
 
-            m_Mesh.Clear();
-            m_Mesh.SetVertices(m_MeshVertices);
-            m_Mesh.SetIndices(m_MeshIndices.ToArray(), MeshTopology.Triangles, 0);
-            m_Mesh.SetColors(m_MeshColors);
+            if (m_Mesh != null)
+            {
+                m_Mesh.Clear();
+                m_Mesh.SetVertices(m_MeshVertices);
+                m_Mesh.SetIndices(m_MeshIndices.ToArray(), MeshTopology.Triangles, 0);
+                m_Mesh.SetColors(m_MeshColors);
+            }
         }
 
         private bool _AreVerticesListsEqual(List<Vector3> firstList, List<Vector3> secondList)

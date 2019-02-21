@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
 
     public enum GameState
     {
@@ -15,7 +16,7 @@ public class GameController : MonoBehaviour {
     public enum PlayerTool
     {
         Bate = 0,
-        Hand = 1        
+        Hand = 1
     }
 
 
@@ -37,7 +38,7 @@ public class GameController : MonoBehaviour {
         {
             state = value;
 
-            if(state  == GameState.SearchingFloor)
+            if (state == GameState.SearchingFloor)
             {
                 if (PlaneGenerator != null)
                 {
@@ -57,7 +58,18 @@ public class GameController : MonoBehaviour {
                 }
                 menu.RestartButton.SetActive(true);
                 menu.ToolsMenu.SetActive(true);
-                menu.SelectTool((int) GameController.PlayerTool.Bate);
+                menu.SelectTool((int)GameController.PlayerTool.Bate);
+            }
+            else if (state == GameState.Broken)
+            {
+                //if (PlaneGenerator != null)
+                //{
+                //    PlaneGenerator.SetActive(true);
+                //    PointCloud.SetActive(true);
+                //}
+                //menu.RestartButton.SetActive(false);
+                //menu.ToolsMenu.SetActive(false);
+                //menu.SelectTool((int)GameController.PlayerTool.Hand);
             }
 
         }
@@ -68,47 +80,48 @@ public class GameController : MonoBehaviour {
     public float Score;
 
     public PlayerController player;
-    public PinataController pinata;    
+    public PinataController pinata;
     public GameObject PlaneGenerator;
     public GameObject PointCloud;
-    
 
-    private  MenuController menu;
+
+    private MenuController menu;
     private CandySpawnController CandyController;
     private ScoreController ScoreController;
 
     private void Awake()
     {
-        if(instance != null && instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
             return;
-        }        
-            instance = this;
+        }
+        instance = this;
         DontDestroyOnLoad(this.gameObject);
-        
+
     }
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         menu = GetComponent<MenuController>();
         CandyController = GetComponent<CandySpawnController>();
         ScoreController = GetComponent<ScoreController>();
 
         Tool = PlayerTool.Hand;
         State = GameState.SearchingFloor;
-    }    
-	
+    }
+
     public void AnimatePlayerTool()
     {
         switch (Tool)
         {
             case PlayerTool.Hand:
-            player.GetComponentInChildren<Animator>().SetTrigger("hideBate");
-            break;
+                player.GetComponentInChildren<Animator>().SetTrigger("hideBate");
+                break;
             case PlayerTool.Bate:
-            player.GetComponentInChildren<Animator>().SetTrigger("showBate");
-            break;
+                player.GetComponentInChildren<Animator>().SetTrigger("showBate");
+                break;
 
         }
 
@@ -119,9 +132,9 @@ public class GameController : MonoBehaviour {
         CandyController.SpawnCandy(amount, position, spread);
     }
 
-        public void RestartPinata()
-    {        
-        if(State != GameState.SearchingFloor)
+    public void RestartPinata()
+    {
+        if (State != GameState.SearchingFloor)
         {
             pinata.Restart();
             CandyController.DestroyCandies();

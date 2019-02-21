@@ -26,13 +26,17 @@ public class TimerController : MonoBehaviour {
             text.SetText(formatTime(timer));
         }
         else
-            GameController.Instance.State = GameController.GameState.GameOver;
+        {
+            
+            //GameController.Instance.State = GameController.GameState.GameOver;
+        }
+            
     }
 
     string formatTime(float time)
     {
         TimeSpan t = TimeSpan.FromSeconds(time);
-        string s = string.Format("{0}:{1}", t.Minutes, t.Seconds);
+        string s = string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
 
         return s;
     }

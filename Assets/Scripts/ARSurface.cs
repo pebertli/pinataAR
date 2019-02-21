@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ARSurface : MonoBehaviour
 {
-	TrackedPlane m_trackedPlane;
+	DetectedPlane m_trackedPlane;
 	MeshCollider m_meshCollider;
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
@@ -28,7 +28,7 @@ public class ARSurface : MonoBehaviour
 		transform.Translate(oneCentimeterUp, Space.Self);
 	}
 
-	public void SetTrackedPlane(TrackedPlane plane, Material material)
+	public void SetTrackedPlane(DetectedPlane plane, Material material)
 	{
 		m_trackedPlane = plane;
 		m_meshRenderer.material = material;
