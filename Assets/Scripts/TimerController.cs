@@ -6,18 +6,18 @@ using TMPro;
 
 public class TimerController : MonoBehaviour {
 
-    public GameObject TimerText;
+    //public GameObject TimerText;
     //current timer
     public float Timer = 30f;
     [HideInInspector]
     public bool TimerOn = false;
 
-    private TextMeshProUGUI _text;
+   // private TextMeshProUGUI _text;
 
 	// Use this for initialization
 	void Start () {
-        _text = TimerText.GetComponent<TextMeshProUGUI>();
-        _text.SetText(formatTime(Timer));
+        //_text = TimerText.GetComponent<TextMeshProUGUI>();
+       GameController.Instance.UpdateTimer(Timer);
         
 	}
 	
@@ -28,7 +28,7 @@ public class TimerController : MonoBehaviour {
         {
             Timer -= Time.deltaTime;
             //update UI
-            _text.SetText(formatTime(Timer));
+            GameController.Instance.UpdateTimer(Timer);
         }
         else if(TimerOn && Timer <=0)
         {
@@ -38,11 +38,6 @@ public class TimerController : MonoBehaviour {
             
     }
 
-    string formatTime(float time)
-    {
-        TimeSpan t = TimeSpan.FromSeconds(time);
-        string s = string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
-
-        return s;
-    }
+   
+   
 }

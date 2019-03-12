@@ -4,58 +4,57 @@ using UnityEngine;
 
 public class StarCandyController : MonoBehaviour {
 
-    public GameObject player;
-    public GameObject floor;
-    public GameObject[] candy;    
-    public int maxPick = 3;
+    public GameObject PlayerInstance;
+    public GameObject FloorInstance;
+    public int MaxPick = 3;
 
-    Vector3 nextPosition;
-    bool moving = false;
-    float animationCooldown = 1.5f;
-    Animator animator;
+    Vector3 _nextPosition;
+    bool _moving = false;
+    float _animationCooldown = 1.5f;
+    Animator _animator;
 	// Use this for initialization
 	void Start () {
-        animator = GetComponentInChildren<Animator>();
+        _animator = GetComponentInChildren<Animator>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (animationCooldown > 0)
-            animationCooldown -= Time.deltaTime;
+        if (_animationCooldown > 0)
+            _animationCooldown -= Time.deltaTime;
         else
         {
-            animationCooldown = 1.5f;
+            _animationCooldown = 1.5f;
             int animRandom = Random.Range(0, 2);
             if (animRandom == 0)
-                animator.SetTrigger("spin");
+                _animator.SetTrigger("spin");
             else
-                animator.SetTrigger("lala");
+                _animator.SetTrigger("lala");
 
         }
 
-        if (!moving)
+        if (!_moving)
         {
-            if (Vector3.Distance(player.transform.position, this.transform.position) < 3)
+            if (Vector3.Distance(PlayerInstance.transform.position, this.transform.position) < 3)
             {
-                Vector3 dir = new Vector3(player.transform.forward.normalized.x*Random.Range(-1,1),0, player.transform.forward.normalized.z * Random.Range(-1, 1)) ;
+                Vector3 dir = new Vector3(PlayerInstance.transform.forward.normalized.x*Random.Range(-1,1),0, PlayerInstance.transform.forward.normalized.z * Random.Range(-1, 1)) ;
                 //float y = 
-                nextPosition = (this.transform.position + (dir.normalized*3));               
+                _nextPosition = (this.transform.position + (dir.normalized*3));               
                 //nextPosition.y = floor.transform.position.y;
-                moving = true;
+                _moving = true;
 
             }
         }
         else
         {
             //run
-            this.transform.position = Vector3.Lerp(this.transform.position, nextPosition, 3f * Time.deltaTime);
-            if (Vector3.Distance(nextPosition, this.transform.position) <= 0.01f)
-                moving = false;
+            this.transform.position = Vector3.Lerp(this.transform.position, _nextPosition, 3f * Time.deltaTime);
+            if (Vector3.Distance(_nextPosition, this.transform.position) <= 0.01f)
+                _moving = false;
         }
 
         Quaternion lookRotation =
-     Quaternion.LookRotation((player.transform.position - transform.position).normalized);
+     Quaternion.LookRotation((PlayerInstance.transform.position - transform.position).normalized);
         
         //over time
         transform.rotation =
@@ -64,11 +63,11 @@ public class StarCandyController : MonoBehaviour {
 
     public void Damage(int power)
     {
-        maxPick -= power;
+        MaxPick -= power;
 
         GameController.Instance.SpawnCandy(10, this.transform.position, 0.1f);
 
-        if (maxPick <= 0)
+        if (MaxPick <= 0)
             Destroy();
     }
 

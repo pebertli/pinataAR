@@ -5,13 +5,14 @@ using UnityEngine;
 public class PinataController : MonoBehaviour
 {
 
-    public GameObject GoodPinata;
-    public GameObject BrokenPinata;
-    public GameObject ParticleHit;
+    //prefabs
+    public GameObject WholePinataPrefab;
+    public GameObject BrokenPinataPrefab;
+    public GameObject HitParticlePrefab;
 
     private Rigidbody _rigidBody;
     private int _health = 10;
-    private GameObject[] _instanceBrokenPinata;
+    private GameObject[] _brokenPinataInstance;
 
     // Use this for initialization
     void Start()
@@ -23,15 +24,15 @@ public class PinataController : MonoBehaviour
     {
         GameController.Instance.State = GameController.GameState.Broken;
         Transform t = this.transform.GetChild(0).transform;
-        GameObject broken = Instantiate<GameObject>(BrokenPinata, t.position, t.rotation, this.transform);
+        GameObject broken = Instantiate<GameObject>(BrokenPinataPrefab, t.position, t.rotation, this.transform);
 
         //instantiate every single parte of the broken pinata separately
         int i = broken.transform.childCount - 1;
-        _instanceBrokenPinata = new GameObject[i + 1];
+        _brokenPinataInstance = new GameObject[i + 1];
         while (i >= 0)
         {
-            _instanceBrokenPinata[i] = broken.transform.GetChild(i).gameObject;
-            _instanceBrokenPinata[i].transform.parent = null;
+            _brokenPinataInstance[i] = broken.transform.GetChild(i).gameObject;
+            _brokenPinataInstance[i].transform.parent = null;
             i--;
         }
 
@@ -51,7 +52,7 @@ public class PinataController : MonoBehaviour
                 return;
             _health -= 25;
 
-            GameObject particle = Instantiate<GameObject>(ParticleHit, other.ClosestPointOnBounds(transform.position), transform.rotation);
+            Instantiate<GameObject>(HitParticlePrefab, other.ClosestPointOnBounds(transform.position), transform.rotation);
             if (_health <= 0)
             {
                 Die();
@@ -66,10 +67,10 @@ public class PinataController : MonoBehaviour
         if (_health <= 0)
         {
             Transform t = this.transform.GetChild(0).transform;
-            GameObject goo = Instantiate<GameObject>(GoodPinata, t.position, t.rotation, this.transform);
+            Instantiate<GameObject>(WholePinataPrefab, t.position, t.rotation, this.transform);
             Destroy(t.gameObject);
 
-            foreach (GameObject g in _instanceBrokenPinata)
+            foreach (GameObject g in _brokenPinataInstance)
                 Destroy(g);
         }
 

@@ -38,36 +38,58 @@ public class GameController : MonoBehaviour
 
         set
         {
-            _state = value;
 
-            if (_state == GameState.SearchingFloor)
+
+            if (value == GameState.SearchingFloor)
             {
-                if (PlaneGenerator != null)
-                {
-                    PlaneGenerator.SetActive(true);
-                    PointCloud.SetActive(true);
-                }
-                _menu.EntryMenu.SetActive(false);
-                _menu.RestartButton.SetActive(false);
-                _menu.ToolsMenu.SetActive(false);
+                if (_state == GameState.Broken || _state == GameState.Started)
+                    this.RestartPinata();
+
+                PlaneGeneratorInstance.SetActive(true);
+                PointCloudInstance.SetActive(true);
+
+                _menu.SnackBarInstance.SetActive(true);
+                _menu.EntryMenuInstance.SetActive(false);
+                _menu.RestartButtonInstance.SetActive(false);
+                _menu.ToolsUIInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
                 _timerController.TimerOn = false;
             }
-            else if (_state == GameState.Started)
+            else if (value == GameState.Started)
             {
-                if (PlaneGenerator != null)
+                if (_state == GameState.SearchingFloor)
                 {
-                    PlaneGenerator.SetActive(false);
-                    PointCloud.SetActive(false);
+
+                    _menu.SnackBarInstance.SetActive(false);
+                    //hide AR plane visual helpers
+                    PlaneGeneratorInstance.SetActive(false);
+                    PointCloudInstance.SetActive(false);
+                    //make pinata look to camera
+                    var lookPos = transform.position - CameraInstance.transform.position;
+                    lookPos.y = 0;
+                    var rotation = Quaternion.LookRotation(lookPos);
+
+                    //instancing pinata and invisible floor
+                    //how high is the pinata?
+                    Vector3 yOffset = new Vector3(0, CameraInstance.transform.position.y + 2f, 0);
+                    GameObject pinata = Instantiate<GameObject>(PinataPrefab, _arController.ARAnchor.transform.position + yOffset, rotation, _arController.ARAnchor.transform);
+                    Instantiate<GameObject>(PlanePrefab, _arController.ARAnchor.transform.position, Quaternion.identity, _arController.ARAnchor.transform);
+
+                    //create anchor and attach pinata and floor            
+                    //pinata.transform.parent = _arController.ARAnchor.transform;
+                    //plane.transform.parent = _arController.ARAnchor.transform;
+
+                    _pinataController = pinata.GetComponentInChildren<PinataController>();
+
+                    _menu.RestartButtonInstance.SetActive(true);
+                    _menu.ToolsUIInstance.SetActive(true);
+                    _menu.SelectTool((int)GameController.PlayerTool.Bate);
+                    //start timer
+                    _timerController.TimerOn = true;
                 }
-                _menu.RestartButton.SetActive(true);
-                _menu.ToolsMenu.SetActive(true);
-                _menu.SelectTool((int)GameController.PlayerTool.Bate);
-                //start timer
-                _timerController.TimerOn = true;
 
             }
-            else if (_state == GameState.Broken)
+            else if (value == GameState.Broken)
             {
                 //stop timer
                 //_timerController.TimerOn = false;
@@ -80,7 +102,7 @@ public class GameController : MonoBehaviour
                 //menu.ToolsMenu.SetActive(false);
                 //menu.SelectTool((int)GameController.PlayerTool.Hand);
             }
-            else if (_state == GameState.GameOver)
+            else if (value == GameState.GameOver)
             {
                 //stop timer
                 _timerController.TimerOn = false;
@@ -89,39 +111,33 @@ public class GameController : MonoBehaviour
                 //    PlaneGenerator.SetActive(true);
                 //    PointCloud.SetActive(true);
                 //}
-                _menu.RestartButton.SetActive(false);
-                _menu.ToolsMenu.SetActive(false);
-                _menu.GameOverMenu.SetActive(true);
+                _menu.RestartButtonInstance.SetActive(false);
+                _menu.ToolsUIInstance.SetActive(false);
+                _menu.GameOverMenuInstance.SetActive(true);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
             }
+
+            _state = value;
 
         }
     }
 
     public PlayerTool Tool;
     public float Score;
-    public PlayerController Player;
-    public GameObject PlaneGenerator;
-    public GameObject PointCloud;
+    public PlayerController PlayerController;
+    public GameObject PinataPrefab;
+    public GameObject PlanePrefab;
+    public GameObject CameraInstance;
+    public GameObject PlaneGeneratorInstance;
+    public GameObject PointCloudInstance;
 
-    private MenuController _menu;
-    private CandySpawnController _candyController;
-    private ScoreController _scoreController;
+    private UIController _menu;
+    private CandySpawnController _candyController;    
     private TimerController _timerController;
+    private ARController _arController;
+    private PinataController _pinataController;
 
-    private PinataController _pinata;
-    public PinataController Pinata
-    {
-        get
-        {
-            return _pinata;
-        }
-
-        set
-        {
-            _pinata = value;
-        }
-    }
+    private float _score = 0;
 
     private void Awake()
     {
@@ -138,13 +154,14 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _menu = GetComponent<MenuController>();
+        _menu = GetComponent<UIController>();
         _candyController = GetComponent<CandySpawnController>();
-        _scoreController = GetComponent<ScoreController>();
         _timerController = GetComponent<TimerController>();
+        _arController = GetComponent<ARController>();
 
         Tool = PlayerTool.Hand;
         State = GameState.EntryMenu;
+        AddScore(0);
     }
 
     public void ChoosePlayerTool(PlayerTool tool)
@@ -156,10 +173,10 @@ public class GameController : MonoBehaviour
             switch (Tool)
             {
                 case PlayerTool.Hand:
-                    Player.GetComponentInChildren<Animator>().SetTrigger("hideBate");
+                    PlayerController.GetComponentInChildren<Animator>().SetTrigger("hideBate");
                     break;
                 case PlayerTool.Bate:
-                    Player.GetComponentInChildren<Animator>().SetTrigger("showBate");
+                    PlayerController.GetComponentInChildren<Animator>().SetTrigger("showBate");
                     break;
 
             }
@@ -176,7 +193,7 @@ public class GameController : MonoBehaviour
     {
         if (State != GameState.SearchingFloor)
         {
-            _pinata.Restart();
+            _pinataController.Restart();
             _candyController.DestroyCandies();
         }
     }
@@ -189,8 +206,14 @@ public class GameController : MonoBehaviour
     }
 
 
-    public void addScore(float score)
+    public void AddScore(float score)
     {
-        _scoreController.addScore(score);
+        _score += score;
+        _menu.ScoreUIInstance.GetComponent<TMPro.TextMeshProUGUI>().SetText("Points: "+_score);
+    }
+
+    public void UpdateTimer(float time)
+    {
+        _menu.TimerUIInstance.GetComponent<TMPro.TextMeshProUGUI>().SetText(Util.FormatTimer(time));   
     }
 }

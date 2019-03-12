@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour
 {
 
-    public Collider TriggerAttack;
+    public Collider AttackTriggerInstance;
 
     private const float _attackCooldownConstant = 0.75f;
     private const float _attackDelayConstant = 0.2f;
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                TriggerAttack.enabled = false;
+                AttackTriggerInstance.enabled = false;
             }
             //allowd to attack
             if (Input.GetMouseButtonDown(0) && _attackCooldown <= 0)
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
                     _attackDelay -= Time.deltaTime;
                 else
                 {
-                    TriggerAttack.enabled = true;
+                    AttackTriggerInstance.enabled = true;
                     _attackDelay = _attackDelayConstant;
                     _attacking = false;
                 }
@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
                     {
                         CandyController c = hit.transform.gameObject.GetComponent<CandyController>();
                         //got a candy
-                        GameController.Instance.addScore(c.Points);
+                        GameController.Instance.AddScore(c.Points);
                         c.Destroy();
                     }
                     else if (hit.transform.gameObject.CompareTag("StarCandy"))

@@ -22,7 +22,7 @@ public class CandySpawnController : MonoBehaviour {
                 GameObject c = Instantiate<GameObject>(CandyPrefabList[r], position, Quaternion.identity);
                 _candyInstanceList.Add(c);
                 //add a force to simulate the inertia of the hit
-                c.GetComponent<Rigidbody>().AddForce(new Vector3(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2)), ForceMode.Impulse);
+                //c.GetComponent<Rigidbody>().AddForce(new Vector3(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2)), ForceMode.Impulse);
             }        
     }
 

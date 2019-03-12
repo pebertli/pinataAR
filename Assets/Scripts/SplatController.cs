@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SplatController : MonoBehaviour
 {
-    public GameObject[] Splat;
-    public GameObject HUD;
+    public GameObject[] SplatPrefabList;
+    public GameObject HUDInstance;
 
     bool _activated = false;
     float _activatedTime = 3f;
@@ -59,7 +59,7 @@ public class SplatController : MonoBehaviour
 
     void NewSplat()
     {
-        GameObject newSplat = Instantiate<GameObject>(Splat[Random.Range(0, 3)], HUD.transform);
+        GameObject newSplat = Instantiate<GameObject>(SplatPrefabList[Random.Range(0, 3)], HUDInstance.transform);
         SpriteRenderer render = newSplat.GetComponent<SpriteRenderer>();
         Color color = render.color;
         color.a = 0.9f;
@@ -79,6 +79,6 @@ public class SplatController : MonoBehaviour
 
     private Vector3 pointInWorld(Vector2 point)
     {
-        return Camera.main.ViewportToWorldPoint(new Vector3(point.x, point.y, HUD.transform.position.z));
+        return Camera.main.ViewportToWorldPoint(new Vector3(point.x, point.y, HUDInstance.transform.position.z));
     }
 }
