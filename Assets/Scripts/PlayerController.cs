@@ -1,23 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerController : MonoBehaviour {
-    
-    private Animator anim;
-    private float attackCooldown = 0f;
-    private float attackDelay = 0.2f;
-    private bool attacking = false;    
+public class PlayerController : MonoBehaviour
+{
 
-    public Collider triggerAttack;
-    
+    public Collider TriggerAttack;
 
+    private const float _attackCooldownConstant = 0.75f;
+    private const float _attackDelayConstant = 0.2f;
 
-	// Use this for initialization
-	void Start () {
-        anim = this.GetComponentInChildren<Animator>();        
-	}
+    private Animator _anim;
+    private float _attackDelay = 0.2f;
+    private float _attackCooldown = 0f;
+    private bool _attacking = false;
+
+    // Use this for initialization
+    void Start()
+    {
+        _anim = this.GetComponentInChildren<Animator>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -33,38 +34,40 @@ public class PlayerController : MonoBehaviour {
 
         if (EventSystem.current.IsPointerOverGameObject())
             return;
+
+        //attack or collect candies
         if (GameController.Instance.Tool == GameController.PlayerTool.Bate)
         {
-            if (attackCooldown > 0)
+            //simulate time to get ready to another hit
+            if (_attackCooldown > 0)
             {
-                attackCooldown -= Time.deltaTime;
+                _attackCooldown -= Time.deltaTime;
 
             }
             else
             {
-                triggerAttack.enabled = false;
+                TriggerAttack.enabled = false;
             }
-            
-                    if (Input.GetMouseButtonDown(0) && attackCooldown <= 0)
-                    {
-                        attacking = true;
-                        attackCooldown = 0.75f;
-                        int attackAnimation = Random.Range(1, 4);
-                        anim.SetTrigger("attack" + attackAnimation);
-                    }
-
-           
-
-
-            if (attacking)
+            //allowd to attack
+            if (Input.GetMouseButtonDown(0) && _attackCooldown <= 0)
             {
-                if (attackDelay > 0)
-                    attackDelay -= Time.deltaTime;
+                _attacking = true;
+                _attackCooldown = _attackCooldownConstant;
+                //choose an animation randomly
+                int attackAnimation = Random.Range(1, 4);
+                _anim.SetTrigger("attack" + attackAnimation);
+            }
+
+            if (_attacking)
+            {
+                // a delay to activate the hit boundbox
+                if (_attackDelay > 0)
+                    _attackDelay -= Time.deltaTime;
                 else
                 {
-                    triggerAttack.enabled = true;
-                    attackDelay = 0.2f;
-                    attacking = false;
+                    TriggerAttack.enabled = true;
+                    _attackDelay = _attackDelayConstant;
+                    _attacking = false;
                 }
             }
         }
@@ -74,18 +77,22 @@ public class PlayerController : MonoBehaviour {
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //filter to candies
                 if (Physics.Raycast(ray, out hit, 20.0f, 1 << 10 | 1 << 11 | 1 << 12))
                 {
                     if (hit.transform.gameObject.CompareTag("Candy"))
                     {
                         CandyController c = hit.transform.gameObject.GetComponent<CandyController>();
-                        GameController.Instance.addScore(c.points);
+                        //got a candy
+                        GameController.Instance.addScore(c.Points);
                         c.Destroy();
                     }
                     else if (hit.transform.gameObject.CompareTag("StarCandy"))
+                        //got a star
                         hit.transform.gameObject.GetComponent<StarCandyController>().Damage(1);
                     else if (hit.transform.gameObject.CompareTag("BadCandy"))
-                        EventManager.TriggerEvent("Activate"+ hit.transform.gameObject.name);
+                        //got a star
+                        EventManager.TriggerEvent("Activate" + hit.transform.gameObject.name);
                 }
             }
 

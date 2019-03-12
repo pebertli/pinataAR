@@ -38,7 +38,7 @@
                 pose.position = new Vector3(0, 0f, 0);
                 pose.rotation = Quaternion.identity;
 
-                GameController.Instance.pinata = prefabPinata.GetComponent<PinataController>();
+                GameController.Instance.Pinata = prefabPinata.GetComponent<PinataController>();
 
                 
                 prefabPinata.transform.parent = prefabPlane.transform;

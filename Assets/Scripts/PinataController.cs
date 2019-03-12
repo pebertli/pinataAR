@@ -5,63 +5,54 @@ using UnityEngine;
 public class PinataController : MonoBehaviour
 {
 
-    public GameObject goodPinata;
-    public GameObject brokenPinata;
+    public GameObject GoodPinata;
+    public GameObject BrokenPinata;
+    public GameObject ParticleHit;
 
-    public GameObject particleHit;
-
-    Rigidbody rigidBody;
-
-    private int health = 10;
-    private GameObject[] instanceBrokenPinata;
+    private Rigidbody _rigidBody;
+    private int _health = 10;
+    private GameObject[] _instanceBrokenPinata;
 
     // Use this for initialization
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        _rigidBody = GetComponent<Rigidbody>();
     }
-
-    //private void Update()
-    //{
-    //    //debug
-    //    if (Input.GetKeyDown("2"))
-    //    {
-    //        health = 0;
-    //        Die();
-    //    }
-    //}
 
     private void Die()
     {
         GameController.Instance.State = GameController.GameState.Broken;
         Transform t = this.transform.GetChild(0).transform;
-        GameObject broken = Instantiate<GameObject>(brokenPinata, t.position, t.rotation, this.transform);
+        GameObject broken = Instantiate<GameObject>(BrokenPinata, t.position, t.rotation, this.transform);
 
+        //instantiate every single parte of the broken pinata separately
         int i = broken.transform.childCount - 1;
-        instanceBrokenPinata = new GameObject[i + 1];
+        _instanceBrokenPinata = new GameObject[i + 1];
         while (i >= 0)
         {
-            instanceBrokenPinata[i] = broken.transform.GetChild(i).gameObject;
-            instanceBrokenPinata[i].transform.parent = null;
+            _instanceBrokenPinata[i] = broken.transform.GetChild(i).gameObject;
+            _instanceBrokenPinata[i].transform.parent = null;
             i--;
         }
 
-        Destroy(t.gameObject);
-        //other.isTrigger = false;
+        //remove the original/unharmed pinata
+        Destroy(t.gameObject);        
+        //instantiate candies
         GameController.Instance.SpawnCandy(20, transform.position, 0.66f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("bate"))
-        {
-            //Debug.Log(other.gameObject.transform.forward);
-            rigidBody.AddForce(other.transform.right * 10f, ForceMode.Impulse);
-            if (health <= 0)
+        {            
+            //hit and make damage to pinata
+            _rigidBody.AddForce(other.transform.right * 10f, ForceMode.Impulse);
+            if (_health <= 0)
                 return;
-            health -= 25;
-            GameObject particle = Instantiate<GameObject>(particleHit, other.ClosestPointOnBounds(transform.position), transform.rotation);
-            if (health <= 0)
+            _health -= 25;
+
+            GameObject particle = Instantiate<GameObject>(ParticleHit, other.ClosestPointOnBounds(transform.position), transform.rotation);
+            if (_health <= 0)
             {
                 Die();
             }
@@ -71,17 +62,18 @@ public class PinataController : MonoBehaviour
 
     public void Restart()
     {
-
-        if (health <= 0)
+        //if has died, clean broken parts and restart the good pinata
+        if (_health <= 0)
         {
             Transform t = this.transform.GetChild(0).transform;
-            GameObject goo = Instantiate<GameObject>(goodPinata, t.position, t.rotation, this.transform);
+            GameObject goo = Instantiate<GameObject>(GoodPinata, t.position, t.rotation, this.transform);
             Destroy(t.gameObject);
-            foreach (GameObject g in instanceBrokenPinata)
+
+            foreach (GameObject g in _instanceBrokenPinata)
                 Destroy(g);
         }
 
 
-        health = 10;
+        _health = 10;
     }
 }

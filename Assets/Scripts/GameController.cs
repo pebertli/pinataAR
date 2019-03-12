@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     public enum GameState
     {
         SearchingFloor = 0,
+        EntryMenu,
         Started,
         Broken,
         GameOver
@@ -27,41 +28,49 @@ public class GameController : MonoBehaviour
         get { return instance; }
     }
 
+    private GameState _state;
     public GameState State
     {
         get
         {
-            return state;
+            return _state;
         }
 
         set
         {
-            state = value;
+            _state = value;
 
-            if (state == GameState.SearchingFloor)
+            if (_state == GameState.SearchingFloor)
             {
                 if (PlaneGenerator != null)
                 {
                     PlaneGenerator.SetActive(true);
                     PointCloud.SetActive(true);
                 }
-                menu.RestartButton.SetActive(false);
-                menu.ToolsMenu.SetActive(false);
-                menu.SelectTool((int)GameController.PlayerTool.Hand);
+                _menu.EntryMenu.SetActive(false);
+                _menu.RestartButton.SetActive(false);
+                _menu.ToolsMenu.SetActive(false);
+                _menu.SelectTool((int)GameController.PlayerTool.Hand);
+                _timerController.TimerOn = false;
             }
-            else if (state == GameState.Started)
+            else if (_state == GameState.Started)
             {
                 if (PlaneGenerator != null)
                 {
                     PlaneGenerator.SetActive(false);
                     PointCloud.SetActive(false);
                 }
-                menu.RestartButton.SetActive(true);
-                menu.ToolsMenu.SetActive(true);
-                menu.SelectTool((int)GameController.PlayerTool.Bate);
+                _menu.RestartButton.SetActive(true);
+                _menu.ToolsMenu.SetActive(true);
+                _menu.SelectTool((int)GameController.PlayerTool.Bate);
+                //start timer
+                _timerController.TimerOn = true;
+
             }
-            else if (state == GameState.Broken)
+            else if (_state == GameState.Broken)
             {
+                //stop timer
+                //_timerController.TimerOn = false;
                 //if (PlaneGenerator != null)
                 //{
                 //    PlaneGenerator.SetActive(true);
@@ -71,23 +80,48 @@ public class GameController : MonoBehaviour
                 //menu.ToolsMenu.SetActive(false);
                 //menu.SelectTool((int)GameController.PlayerTool.Hand);
             }
+            else if (_state == GameState.GameOver)
+            {
+                //stop timer
+                _timerController.TimerOn = false;
+                //if (PlaneGenerator != null)
+                //{
+                //    PlaneGenerator.SetActive(true);
+                //    PointCloud.SetActive(true);
+                //}
+                _menu.RestartButton.SetActive(false);
+                _menu.ToolsMenu.SetActive(false);
+                _menu.GameOverMenu.SetActive(true);
+                _menu.SelectTool((int)GameController.PlayerTool.Hand);
+            }
 
         }
     }
 
-    private GameState state;
     public PlayerTool Tool;
     public float Score;
-
-    public PlayerController player;
-    public PinataController pinata;
+    public PlayerController Player;
     public GameObject PlaneGenerator;
     public GameObject PointCloud;
 
+    private MenuController _menu;
+    private CandySpawnController _candyController;
+    private ScoreController _scoreController;
+    private TimerController _timerController;
 
-    private MenuController menu;
-    private CandySpawnController CandyController;
-    private ScoreController ScoreController;
+    private PinataController _pinata;
+    public PinataController Pinata
+    {
+        get
+        {
+            return _pinata;
+        }
+
+        set
+        {
+            _pinata = value;
+        }
+    }
 
     private void Awake()
     {
@@ -104,45 +138,59 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        menu = GetComponent<MenuController>();
-        CandyController = GetComponent<CandySpawnController>();
-        ScoreController = GetComponent<ScoreController>();
+        _menu = GetComponent<MenuController>();
+        _candyController = GetComponent<CandySpawnController>();
+        _scoreController = GetComponent<ScoreController>();
+        _timerController = GetComponent<TimerController>();
 
         Tool = PlayerTool.Hand;
-        State = GameState.SearchingFloor;
+        State = GameState.EntryMenu;
     }
 
-    public void AnimatePlayerTool()
+    public void ChoosePlayerTool(PlayerTool tool)
     {
-        switch (Tool)
+        //animate only if it needs
+        if (tool != Tool)
         {
-            case PlayerTool.Hand:
-                player.GetComponentInChildren<Animator>().SetTrigger("hideBate");
-                break;
-            case PlayerTool.Bate:
-                player.GetComponentInChildren<Animator>().SetTrigger("showBate");
-                break;
+            Tool = tool;
+            switch (Tool)
+            {
+                case PlayerTool.Hand:
+                    Player.GetComponentInChildren<Animator>().SetTrigger("hideBate");
+                    break;
+                case PlayerTool.Bate:
+                    Player.GetComponentInChildren<Animator>().SetTrigger("showBate");
+                    break;
 
+            }
         }
 
     }
 
     public void SpawnCandy(int amount, Vector3 position, float spread)
     {
-        CandyController.SpawnCandy(amount, position, spread);
+        _candyController.SpawnCandy(amount, position, spread);
     }
 
     public void RestartPinata()
     {
         if (State != GameState.SearchingFloor)
         {
-            pinata.Restart();
-            CandyController.DestroyCandies();
+            _pinata.Restart();
+            _candyController.DestroyCandies();
         }
     }
 
+    public void StartPlay()
+    {
+        State = GameState.SearchingFloor;
+        //menu.EntryMenu.GetComponent<Animator>().SetBool("Fade", false);
+        //menu.EntryMenu.GetComponent<Animator>().Play("fade_menu");
+    }
+
+
     public void addScore(float score)
     {
-        ScoreController.addScore(score);
+        _scoreController.addScore(score);
     }
 }

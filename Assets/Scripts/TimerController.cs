@@ -6,29 +6,34 @@ using TMPro;
 
 public class TimerController : MonoBehaviour {
 
-    public GameObject timerText;
-    public float timer = 30f;
+    public GameObject TimerText;
+    //current timer
+    public float Timer = 30f;
+    [HideInInspector]
+    public bool TimerOn = false;
 
-    private TextMeshProUGUI text;
+    private TextMeshProUGUI _text;
 
 	// Use this for initialization
 	void Start () {
-        text = timerText.GetComponent<TextMeshProUGUI>();
-        text.SetText(formatTime(timer));
+        _text = TimerText.GetComponent<TextMeshProUGUI>();
+        _text.SetText(formatTime(Timer));
         
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (timer > 0)
+        //still have time and timer is enabled
+        if (Timer > 0 && TimerOn)
         {
-            timer -= Time.deltaTime;
-            text.SetText(formatTime(timer));
+            Timer -= Time.deltaTime;
+            //update UI
+            _text.SetText(formatTime(Timer));
         }
-        else
+        else if(TimerOn && Timer <=0)
         {
-            
-            //GameController.Instance.State = GameController.GameState.GameOver;
+            TimerOn = false;
+            GameController.Instance.State = GameController.GameState.GameOver;
         }
             
     }

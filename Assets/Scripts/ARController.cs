@@ -2,9 +2,7 @@
 {
     using System.Collections.Generic;
     using GoogleARCore;
-    using GoogleARCore.Examples.Common;
     using UnityEngine;
-    using UnityEngine.UI;
 
 #if UNITY_EDITOR
     // Set up touch input propagation while using Instant Preview in the editor.
@@ -14,173 +12,108 @@
     public class ARController : MonoBehaviour
     {
 
-        public Camera FirstPersonCamera;
-        public GameObject DetectedPlanePrefab;
-        public GameObject AndyPlanePrefab;
-        public GameObject AndyPointPrefab;
 
+        public Camera FirstPersonCamera;
+        public GameObject DetectedPlaneController;
         //snackBar parent
         public GameObject SearchingForPlaneUI;
-
-        private List<DetectedPlane> m_AllPlanes = new List<DetectedPlane>();
-        private bool m_IsQuitting = false;
-
-
-        private bool hasPlaneDetected = false;
-        private DetectedPlane ARPlane;
-        private Anchor ARAnchor;
         public GameObject Pinata;
         public GameObject Plane;
 
+        private const float _sizePlan = 1.0f;
+        private List<DetectedPlane> _allPlanes = new List<DetectedPlane>();
+        private bool _isQuitting = false;
+        private bool _hasPlaneDetected = false;
+        private DetectedPlane _arPlane;
+        private Anchor _arAnchor;
 
-
-
-        //debug
-        //private bool searching = true;
-
-        //private void Simulate(int i)
-        //{
-        //    switch (i)
-        //    {
-        //        case 1:
-        //            searching = false;
-        //            //GameController.Instance.State = 
-        //            break;
-        //        case 3:
-        //            searching = true;
-        //            GameController.Instance.State = GameController.GameState.Broken;
-        //            break;
-        //    }
-        //}
 
         public void Update()
-        {          
+        {
             _UpdateApplicationLifecycle();
 
-            //if (Input.GetKeyDown("1"))
-            //    Simulate(1);
-            //if (Input.GetKeyDown("3"))
-            //    Simulate(3);
+            if (GameController.Instance.State == GameController.GameState.EntryMenu)
+                return;
 
             //Get all planes deteted by ARCore engine
-            Session.GetTrackables<DetectedPlane>(m_AllPlanes);
-            //debug
-            //bool showSearchingUI = true && searching;
+            Session.GetTrackables<DetectedPlane>(_allPlanes);
 
             //iterate over each plane searching for a suitable plane (status, size and orientation)
-            hasPlaneDetected = false;
-            for (int i = 0; i < m_AllPlanes.Count; i++)
+            _hasPlaneDetected = false;
+            for (int i = 0; i < _allPlanes.Count; i++)
             {
                 //detected a floor with minimum size
-                if (m_AllPlanes[i].TrackingState == TrackingState.Tracking
-                    && m_AllPlanes[i].PlaneType == DetectedPlaneType.HorizontalUpwardFacing
-                    && (m_AllPlanes[i].ExtentX > 1f || m_AllPlanes[i].ExtentZ > 1f)
-                    )
+                if (_allPlanes[i].TrackingState == TrackingState.Tracking
+                    && _allPlanes[i].PlaneType == DetectedPlaneType.HorizontalUpwardFacing
+                    && (_allPlanes[i].ExtentX > _sizePlan || _allPlanes[i].ExtentZ > _sizePlan))
                 {
                     //if there was no plane detected before
                     //else use the previous detection
                     //if (ARPlane == null)
-                        ARPlane = m_AllPlanes[i];
+                    _arPlane = _allPlanes[i];
 
-                    //a plane was detected, so there is no need to itereate more
-                    hasPlaneDetected = true;
+                    //a plane was detected, so there is no need to iterate more
+                    _hasPlaneDetected = true;
                     break;
                 }
-                //else
-                //{
-
-                //    if (ARPlane != null)
-                //    {
-                //        List<Anchor> anchorList = new List<Anchor>();
-                //        ARPlane.GetAllAnchors(anchorList);
-                //        foreach (Anchor anchor in anchorList)
-                //            Destroy(anchor);
-                //    }
-                //    if(ARAnchor != null)
-                //        DestroyImmediate(ARAnchor.gameObject);
-                //        ARAnchor = null;
-                //        ARPlane = null;
-                    
-                //}
             }
-            //debug
-            //showSearchingUI = true && searching;            
-
             //hide snackbar
-            SearchingForPlaneUI.SetActive(!hasPlaneDetected);
+            SearchingForPlaneUI.SetActive(!_hasPlaneDetected);
 
             //found a plane and was not playing yet
-            if (hasPlaneDetected && GameController.Instance.State == GameController.GameState.SearchingFloor)
+            if (_hasPlaneDetected && GameController.Instance.State == GameController.GameState.SearchingFloor)
             {
                 //Playing
                 GameController.Instance.State = GameController.GameState.Started;
                 //hide AR plane visual helpers
-                DetectedPlanePrefab.SetActive(false);
+                DetectedPlaneController.SetActive(false);
                 //get all anchors in the detected floor
                 List<Anchor> anchorList = new List<Anchor>();
-                //if(ARPlane!=null) //debug
-                ARPlane.GetAllAnchors(anchorList);
-                //if there is no pinata/anchor instanced yet
-                //if (ARPlane != null /*&& anchorList.Count == 0*/)
-                //if (anchorList.Count == 0)//debug
-                {
+                _arPlane.GetAllAnchors(anchorList);
+                
+                //make pinata look to camera
+                var lookPos = transform.position - FirstPersonCamera.transform.position;
+                lookPos.y = 0;
+                var rotation = Quaternion.LookRotation(lookPos);
 
-                    var lookPos = transform.position - FirstPersonCamera.transform.position;
-                    lookPos.y = 0;
-                    var rotation = Quaternion.LookRotation(lookPos);
+                //instancing pinata and invisible floor
+                //how high is the pinata?
+                Vector3 yOffset = new Vector3(0, FirstPersonCamera.transform.position.y + 2f, 0);
+                GameObject prefabPinata = Instantiate<GameObject>(Pinata, _arPlane.CenterPose.position + yOffset, rotation);
+                GameObject prefabPlane = Instantiate<GameObject>(Plane, _arPlane.CenterPose.position, Quaternion.identity);
+           
+                //set an anchor post
+                Pose pose;
+                pose.position = _arPlane.CenterPose.position;
+                pose.rotation = Quaternion.identity;
+                //make game controller aware of this new pinata
+                //TODO game controller should create this
+                GameController.Instance.Pinata = prefabPinata.GetComponentInChildren<PinataController>();
+                //create anchor and attach pinata and floor
+                _arAnchor = _arPlane.CreateAnchor(pose);
+                prefabPinata.transform.parent = _arAnchor.transform;
+                prefabPlane.transform.parent = _arAnchor.transform;
 
-                    //instancing pinata and invisible floor
-                    GameObject prefabPinata = Instantiate<GameObject>(Pinata, ARPlane.CenterPose.position +
-                        new Vector3(0, FirstPersonCamera.transform.position.y + 2f, 0), rotation);
-                    GameObject prefabPlane = Instantiate<GameObject>(Plane, ARPlane.CenterPose.position, Quaternion.identity);
-
-                    //debug
-                    //GameObject prefabPinata = Instantiate<GameObject>(Pinata, new Vector3(0, 2, 2), Quaternion.identity);
-                    //GameObject prefabPlane = Instantiate<GameObject>(Plane, Vector3.zero, Quaternion.identity);
-
-                    //set an anchor post
-                    Pose pose;
-                    pose.position = ARPlane.CenterPose.position;
-                    pose.rotation = Quaternion.identity;
-                    //make game controller aware of this new pinata
-                    //TODO game controller should create this
-                    GameController.Instance.pinata = prefabPinata.GetComponentInChildren<PinataController>();
-                    //create anchor and attach pinata and floor
-                    ARAnchor = ARPlane.CreateAnchor(pose);
-                    prefabPinata.transform.parent = ARAnchor.transform;
-                    prefabPlane.transform.parent = ARAnchor.transform;
-                }
             }
             //if lost the detected plane and was playing
-            if (!hasPlaneDetected && 
-                (GameController.Instance.State == GameController.GameState.Started 
+            if (!_hasPlaneDetected &&
+                (GameController.Instance.State == GameController.GameState.Started
                 || GameController.Instance.State == GameController.GameState.Broken))
             {
-
-              
-                //reset detected plane, but the same plane can be detected again                
-                GameController.Instance.RestartPinata();               
+                //reset detected plane, but the same plane can be detected again              
+                GameController.Instance.RestartPinata();
                 //get all anchors in the detected floor
-                if(ARPlane != null)
+                if (_arPlane != null)
                 {
-                    //List<Anchor> anchorList = new List<Anchor>();
-                    //ARPlane.GetAllAnchors(anchorList);
-                    //foreach (Anchor anchor in anchorList)
-                    //        Destroy(anchor);
-                    
-                    DestroyImmediate(ARAnchor.gameObject);
-                    ARAnchor = null;
-                ARPlane = null;
+                    DestroyImmediate(_arAnchor.gameObject);
+                    _arAnchor = null;
+                    _arPlane = null;
                 }
 
                 //not playing
                 GameController.Instance.State = GameController.GameState.SearchingFloor;
                 //show plane visual helper
-                DetectedPlanePrefab.SetActive(true);
-
-
-
-
+                DetectedPlaneController.SetActive(true);
             }
 
         }
@@ -193,12 +126,6 @@
                 Application.Quit();
             }
 
-            //if(Input.GetKeyDown("c"))
-            //{
-            //    hasPlaneDetected = true;
-            //    GameController.Instance.State = GameController.GameState.SearchingFloor;
-            //}
-
             // Only allow the screen to sleep when not tracking.
             if (Session.Status != SessionStatus.Tracking)
             {
@@ -210,7 +137,7 @@
                 Screen.sleepTimeout = SleepTimeout.NeverSleep;
             }
 
-            if (m_IsQuitting)
+            if (_isQuitting)
             {
                 return;
             }
@@ -219,13 +146,13 @@
             if (Session.Status == SessionStatus.ErrorPermissionNotGranted)
             {
                 _ShowAndroidToastMessage("Camera permission is needed to run this application.");
-                m_IsQuitting = true;
+                _isQuitting = true;
                 Invoke("_DoQuit", 0.5f);
             }
             else if (Session.Status.IsError())
             {
                 _ShowAndroidToastMessage("ARCore encountered a problem connecting.  Please start the app again.");
-                m_IsQuitting = true;
+                _isQuitting = true;
                 Invoke("_DoQuit", 0.5f);
             }
         }

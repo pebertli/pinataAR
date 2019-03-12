@@ -4,18 +4,11 @@ using UnityEngine;
 
 public class SplatController : MonoBehaviour
 {
-    public GameObject[] splat;
+    public GameObject[] Splat;
     public GameObject HUD;
 
-    bool activated = false;
-    float activatedTime = 3f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
+    bool _activated = false;
+    float _activatedTime = 3f;
 
 
     // Update is called once per frame
@@ -25,16 +18,16 @@ public class SplatController : MonoBehaviour
         {
             for (int i = 0; i < 6; i++)
                 NewSplat();
-            activated = true;
-            activatedTime = 3f;
+            _activated = true;
+            _activatedTime = 3f;
         }
 
-        if(activated)
+        if(_activated)
         {
-            activatedTime -= Time.deltaTime*0.5f;
-            if(activatedTime <= 0)
+            _activatedTime -= Time.deltaTime*0.5f;
+            if(_activatedTime <= 0)
             {
-                activated = false;
+                _activated = false;
             }
         }
     }
@@ -43,8 +36,8 @@ public class SplatController : MonoBehaviour
     {
         for (int i = 0; i < amount; i++)
             NewSplat();
-        activated = true;
-        activatedTime = 3f;
+        _activated = true;
+        _activatedTime = 3f;
     }
 
     IEnumerator UpdateSplats(Transform splatTransform, SpriteRenderer renderer)
@@ -66,7 +59,7 @@ public class SplatController : MonoBehaviour
 
     void NewSplat()
     {
-        GameObject newSplat = Instantiate<GameObject>(splat[Random.Range(0, 3)], HUD.transform);
+        GameObject newSplat = Instantiate<GameObject>(Splat[Random.Range(0, 3)], HUD.transform);
         SpriteRenderer render = newSplat.GetComponent<SpriteRenderer>();
         Color color = render.color;
         color.a = 0.9f;
