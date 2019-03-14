@@ -10,15 +10,15 @@ public class BadCandyController : MonoBehaviour
        
     }
 
-    private void OnEnable()
-    {
-        EventManager.StartListening("Activate"+ this.transform.gameObject.name, Activate);
-    }
+    //private void OnEnable()
+    //{
+    //    EventManager.StartListening("Activate"+ this.transform.gameObject.name, Activate);
+    //}
 
     public void Activate()
     {
-        Debug.Log("Name: " + this.transform.gameObject.name);
-        SplatController splatController = GetComponent<SplatController>();
+        //Debug.Log("Name: " + this.transform.gameObject.name);
+        SplatController splatController = GameController.Instance.gameObject.GetComponent<SplatController>();
         splatController.DoSplash(6);
     }
 }

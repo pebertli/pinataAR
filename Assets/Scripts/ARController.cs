@@ -116,8 +116,8 @@ public class ARController : MonoBehaviour
             {
                 DestroyImmediate(ARAnchor.gameObject);
                 ARAnchor = null;
-                _arPlane = null;
             }
+        _arPlane = null;
     }
 
     public void GenerateAnchor()

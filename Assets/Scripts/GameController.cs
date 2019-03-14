@@ -40,50 +40,61 @@ public class GameController : MonoBehaviour
         set
         {
             Debug.Log(_state+" "+value);
-            if (value == GameState.SearchingFloor)
+
+            if (value == GameState.MainMenu)
             {
-
-                //if (_state == GameState.Broken || _state == GameState.Playing)
-                //    StartSearch();
-
-                if(_pinataController != null)
-                    _pinataController.Restart();
-                _candyController.DestroyCandies();
-
-                PlaneGeneratorInstance.SetActive(true);
-                PointCloudInstance.SetActive(true);
-                _menu.SnackBarInstance.SetActive(true);
-                _menu.EntryMenuInstance.SetActive(false);
+                _timerController.TimerOn = false;
+                PlaneGeneratorInstance.SetActive(false);
+                PointCloudInstance.SetActive(false);
+                _menu.SnackBarInstance.SetActive(false);
+                _menu.EntryMenuInstance.SetActive(true);
+                _menu.GameOverMenuInstance.SetActive(false);
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
-                _state = GameState.SearchingFloor;
+                _state = GameState.MainMenu;
+            }
+            else if (value == GameState.SearchingFloor)
+            {
+                if (!_arController.HasPlaneDetected)
+                {
+                    if (_pinataController != null)
+                        _pinataController.Restart();
+                    _candyController.DestroyCandies();
+
+                    _timerController.TimerOn = false;
+                    PlaneGeneratorInstance.SetActive(true);
+                    PointCloudInstance.SetActive(true);
+                    _menu.SnackBarInstance.SetActive(true);
+                    _menu.EntryMenuInstance.SetActive(false);
+                    _menu.GameOverMenuInstance.SetActive(false);
+                    _menu.RestartButtonInstance.SetActive(false);
+                    _menu.ToolsUIInstance.SetActive(false);
+                    _menu.SelectTool((int)GameController.PlayerTool.Hand);
+
+                    _state = GameState.SearchingFloor;
+                }
+                else
+                {
+                    _state = GameState.SearchingFloor;
+                    State = GameState.Ready;
+                }
             }
             if (value == GameState.Ready)
             {
-                //if (_state == GameState.Broken || _state == GameState.Playing)
-                //    StartSearch();
-
-                //PlaneGeneratorInstance.SetActive(true);
-                //PointCloudInstance.SetActive(true);
-
-                //_menu.SnackBarInstance.SetActive(true);
-                //_menu.EntryMenuInstance.SetActive(false);
-                //_menu.RestartButtonInstance.SetActive(false);
-                //_menu.ToolsUIInstance.SetActive(false);
-                //_menu.SelectTool((int)GameController.PlayerTool.Hand);
                 _state = GameState.Ready;
                 State = GameState.Playing;
             }
             else if (value == GameState.Playing)
             {
-                _timerController.Timer = ConstantHelper.PLAY_TIME;
-                if (_pinataController != null)
-                    _pinataController.Restart();
-                _candyController.DestroyCandies();
 
-                if (_state == GameState.Ready)
+                _candyController.DestroyCandies();
+                if (_pinataController != null)
+                {
+                    _pinataController.Restart();
+                }
+                else if (_pinataController == null)
                 {
                     _menu.SnackBarInstance.SetActive(false);
                     //hide AR plane visual helpers
@@ -100,8 +111,8 @@ public class GameController : MonoBehaviour
                     GameObject dummy = new GameObject();
                     dummy.name = "dummy";
                     Transform anchorTransform = dummy.transform;
-                    
-                    if(_arController.ARAnchor != null)
+
+                    if (_arController.ARAnchor != null)
                     {
                         anchorTransform = _arController.ARAnchor.transform;
                     }
@@ -109,16 +120,18 @@ public class GameController : MonoBehaviour
                     Instantiate<GameObject>(PlanePrefab, anchorTransform.position, Quaternion.identity, anchorTransform.transform);
 
                     _pinataController = pinata.GetComponentInChildren<PinataController>();
-
-                  
                 }
 
+                _timerController.TimerOn = true;
+                _timerController.Timer = ConstantHelper.PLAY_TIME;
+                PlaneGeneratorInstance.SetActive(false);
+                PointCloudInstance.SetActive(false);
+                _menu.SnackBarInstance.SetActive(false);
+                _menu.EntryMenuInstance.SetActive(false);
+                _menu.GameOverMenuInstance.SetActive(false);
                 _menu.RestartButtonInstance.SetActive(true);
                 _menu.ToolsUIInstance.SetActive(true);
-                _menu.GameOverMenuInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Bate);
-                //start timer
-                _timerController.TimerOn = true;
 
                 _state = GameState.Playing;
 
@@ -129,16 +142,16 @@ public class GameController : MonoBehaviour
             }
             else if (value == GameState.GameOver)
             {
-                //stop timer
+                _menu.FinalScoreUIInstance.GetComponent<TMPro.TextMeshProUGUI>().SetText("Final Score: " + _score);
+
                 _timerController.TimerOn = false;
-                //if (PlaneGenerator != null)
-                //{
-                //    PlaneGenerator.SetActive(true);
-                //    PointCloud.SetActive(true);
-                //}
+                PlaneGeneratorInstance.SetActive(false);
+                PointCloudInstance.SetActive(false);
+                _menu.SnackBarInstance.SetActive(false);
+                _menu.EntryMenuInstance.SetActive(false);
+                _menu.GameOverMenuInstance.SetActive(true);
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
-                _menu.GameOverMenuInstance.SetActive(true);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                 _state = GameState.GameOver;
@@ -227,42 +240,8 @@ public class GameController : MonoBehaviour
 
     public void SpawnCandy(int amount, Vector3 position, float spread)
     {
-        _candyController.SpawnCandy(amount, position, spread);
+        _candyController.SpawnCandy(amount, position, spread);        
     }
-
-    public void RestartPlay()
-    {
-    
-        if (_arController.HasPlaneDetected)
-        {
-            State = GameState.Playing;            
-        }
-        else
-        {
-            State = GameState.SearchingFloor;
-        }
-        
-
-    }
-
-    //public void RestartPinata()
-    //{
-    //    if (State != GameState.SearchingFloor)
-    //    {
-    //        _pinataController.Restart();
-    //        _candyController.DestroyCandies();
-    //    }
-    //}
-
-    //public void StartSearch()
-    //{
-    //    _timerController.Timer = ConstantHelper.PLAY_TIME;
-    //    _timerController.TimerOn = false;
-    //    if(_pinataController != null)
-    //        _pinataController.Restart();
-    //    _candyController.DestroyCandies();
-    //}
-
 
     public void AddScore(float score)
     {

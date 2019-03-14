@@ -91,8 +91,9 @@ public class PlayerController : MonoBehaviour
                         //got a star
                         hit.transform.gameObject.GetComponent<StarCandyController>().Damage(1);
                     else if (hit.transform.gameObject.CompareTag("BadCandy"))
-                        //got a star
-                        EventManager.TriggerEvent("Activate" + hit.transform.gameObject.name);
+                        //EventManager.TriggerEvent("Activate" + hit.transform.gameObject.name);
+                        hit.transform.gameObject.GetComponent<BadCandyController>().Activate();
+
                 }
             }
 
