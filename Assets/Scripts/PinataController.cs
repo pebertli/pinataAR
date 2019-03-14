@@ -11,7 +11,7 @@ public class PinataController : MonoBehaviour
     public GameObject HitParticlePrefab;
 
     private Rigidbody _rigidBody;
-    private int _health = 10;
+    private int _health = ConstantHelper.HEALTH_PINATA;
     private GameObject[] _brokenPinataInstance;
 
     // Use this for initialization
@@ -50,7 +50,7 @@ public class PinataController : MonoBehaviour
             _rigidBody.AddForce(other.transform.right * 10f, ForceMode.Impulse);
             if (_health <= 0)
                 return;
-            _health -= 25;
+            _health -= ConstantHelper.HIT_DAMAGE;
 
             Instantiate<GameObject>(HitParticlePrefab, other.ClosestPointOnBounds(transform.position), transform.rotation);
             if (_health <= 0)
@@ -75,6 +75,6 @@ public class PinataController : MonoBehaviour
         }
 
 
-        _health = 10;
+        _health = ConstantHelper.HEALTH_PINATA;
     }
 }

@@ -20,25 +20,27 @@ public class ARController : MonoBehaviour
 
     private List<DetectedPlane> _allPlanes = new List<DetectedPlane>();
     private bool _isQuitting = false;
-    private bool _hasPlaneDetected = false;
     private DetectedPlane _arPlane;
 
     [HideInInspector]
-    public Anchor ARAnchor;
+    public Anchor ARAnchor = null;
+    [HideInInspector]
+    public bool HasPlaneDetected = false;
 
 
     public void Update()
     {
         _UpdateApplicationLifecycle();
 
-        if (GameController.Instance.State == GameController.GameState.EntryMenu)
+        if (GameController.Instance.State == GameController.GameState.GameOver
+            || GameController.Instance.State == GameController.GameState.MainMenu)
             return;
 
         //Get all planes deteted by ARCore engine
         Session.GetTrackables<DetectedPlane>(_allPlanes);
 
         //iterate over each plane searching for a suitable plane (status, size and orientation)
-        _hasPlaneDetected = false;
+        //HasPlaneDetected = false;
         for (int i = 0; i < _allPlanes.Count; i++)
         {
             //detected a floor with minimum size
@@ -48,22 +50,78 @@ public class ARController : MonoBehaviour
             {
                 //if there was no plane detected before
                 //else use the previous detection
-                //if (ARPlane == null)
-                _arPlane = _allPlanes[i];
-
-                //a plane was detected, so there is no need to iterate more
-                _hasPlaneDetected = true;
+                if (_arPlane == null)
+                {
+                    _arPlane = _allPlanes[i];                    
+                    GenerateAnchor();
+                }
+                HasPlaneDetected = true;
+                //a plane was detected, so there is no need to iterate more               
                 break;
             }
+            if(i == _allPlanes.Count-1)//last
+            {
+                CleanAnchor();
+                HasPlaneDetected = false;
+            }
         }
-        //hide snackbar
-        //GameController.Instance.ShowSnackBar(!_hasPlaneDetected);
 
         //found a plane and was not playing yet
-        if (_hasPlaneDetected && ARAnchor == null)
-        {
-            //Playing
+        //if (_hasPlaneDetected && ARAnchor == null)
+        //{
+        //    //Playing
 
+        //    //get all anchors in the detected floor
+        //    List<Anchor> anchorList = new List<Anchor>();
+        //    _arPlane.GetAllAnchors(anchorList);
+        //    //set an anchor post
+        //    Pose pose;
+        //    pose.position = _arPlane.CenterPose.position;
+        //    pose.rotation = Quaternion.identity;
+        //    ARAnchor = _arPlane.CreateAnchor(pose);
+
+        //    GameController.Instance.State = GameController.GameState.Playing;
+
+
+
+        //}
+        //if lost the detected plane and was playing
+        //if (!_hasPlaneDetected && ARAnchor != null)
+        //{
+        //    //not playing
+        //    GameController.Instance.State = GameController.GameState.SearchingFloor;
+        //    //reset detected plane, but the same plane can be detected again              
+        //    //GameController.Instance.RestartPinata();
+        //    //get all anchors in the detected floor
+        //    if (_arPlane != null)
+        //    {
+        //        DestroyImmediate(ARAnchor.gameObject);
+        //        ARAnchor = null;
+        //        _arPlane = null;
+        //    }
+
+
+        //    //show plane visual helper
+        //    //DetectedPlaneController.SetActive(true);
+        //}
+
+    }
+
+    public void CleanAnchor()
+    {
+            //reset detected plane, but the same plane can be detected again              
+            //GameController.Instance.RestartPinata();
+            //get all anchors in the detected floor
+            if (ARAnchor != null)
+            {
+                DestroyImmediate(ARAnchor.gameObject);
+                ARAnchor = null;
+                _arPlane = null;
+            }
+    }
+
+    public void GenerateAnchor()
+    {
             //get all anchors in the detected floor
             List<Anchor> anchorList = new List<Anchor>();
             _arPlane.GetAllAnchors(anchorList);
@@ -72,33 +130,8 @@ public class ARController : MonoBehaviour
             pose.position = _arPlane.CenterPose.position;
             pose.rotation = Quaternion.identity;
             ARAnchor = _arPlane.CreateAnchor(pose);
-
-            GameController.Instance.State = GameController.GameState.Started;
-
-           
-
-        }
-        //if lost the detected plane and was playing
-        if (!_hasPlaneDetected /*&& (GameController.Instance.State == GameController.GameState.Started || GameController.Instance.State == GameController.GameState.Broken)*/)
-        {
-            //not playing
-            GameController.Instance.State = GameController.GameState.SearchingFloor;
-            //reset detected plane, but the same plane can be detected again              
-            //GameController.Instance.RestartPinata();
-            //get all anchors in the detected floor
-            if (_arPlane != null)
-            {
-                DestroyImmediate(ARAnchor.gameObject);
-                ARAnchor = null;
-                _arPlane = null;
-            }
-
-          
-            //show plane visual helper
-            //DetectedPlaneController.SetActive(true);
-        }
-
     }
+
 
     private void _UpdateApplicationLifecycle()
     {

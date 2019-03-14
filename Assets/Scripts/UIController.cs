@@ -33,13 +33,13 @@ public class UIController : MonoBehaviour {
 
     public void RestartClick()
     {
-        GameController.Instance.RestartPinata();                       
+        GameController.Instance.RestartPlay();                       
     }
 
 
     public void PlayClick()
     {
-        GameController.Instance.StartPlay();
+        GameController.Instance.State = GameController.GameState.SearchingFloor;
 
     }
 

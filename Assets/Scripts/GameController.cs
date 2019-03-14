@@ -7,9 +7,10 @@ public class GameController : MonoBehaviour
 
     public enum GameState
     {
-        SearchingFloor = 0,
-        EntryMenu,
-        Started,
+        MainMenu = 0,
+        SearchingFloor,
+        Ready,
+        Playing,
         Broken,
         GameOver
     }
@@ -38,28 +39,52 @@ public class GameController : MonoBehaviour
 
         set
         {
-
-
+            Debug.Log(_state+" "+value);
             if (value == GameState.SearchingFloor)
             {
-                if (_state == GameState.Broken || _state == GameState.Started)
-                    this.RestartPinata();
+
+                //if (_state == GameState.Broken || _state == GameState.Playing)
+                //    StartSearch();
+
+                if(_pinataController != null)
+                    _pinataController.Restart();
+                _candyController.DestroyCandies();
 
                 PlaneGeneratorInstance.SetActive(true);
                 PointCloudInstance.SetActive(true);
-
                 _menu.SnackBarInstance.SetActive(true);
                 _menu.EntryMenuInstance.SetActive(false);
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
-                _timerController.TimerOn = false;
-            }
-            else if (value == GameState.Started)
-            {
-                if (_state == GameState.SearchingFloor)
-                {
 
+                _state = GameState.SearchingFloor;
+            }
+            if (value == GameState.Ready)
+            {
+                //if (_state == GameState.Broken || _state == GameState.Playing)
+                //    StartSearch();
+
+                //PlaneGeneratorInstance.SetActive(true);
+                //PointCloudInstance.SetActive(true);
+
+                //_menu.SnackBarInstance.SetActive(true);
+                //_menu.EntryMenuInstance.SetActive(false);
+                //_menu.RestartButtonInstance.SetActive(false);
+                //_menu.ToolsUIInstance.SetActive(false);
+                //_menu.SelectTool((int)GameController.PlayerTool.Hand);
+                _state = GameState.Ready;
+                State = GameState.Playing;
+            }
+            else if (value == GameState.Playing)
+            {
+                _timerController.Timer = ConstantHelper.PLAY_TIME;
+                if (_pinataController != null)
+                    _pinataController.Restart();
+                _candyController.DestroyCandies();
+
+                if (_state == GameState.Ready)
+                {
                     _menu.SnackBarInstance.SetActive(false);
                     //hide AR plane visual helpers
                     PlaneGeneratorInstance.SetActive(false);
@@ -72,35 +97,35 @@ public class GameController : MonoBehaviour
                     //instancing pinata and invisible floor
                     //how high is the pinata?
                     Vector3 yOffset = new Vector3(0, CameraInstance.transform.position.y + 2f, 0);
-                    GameObject pinata = Instantiate<GameObject>(PinataPrefab, _arController.ARAnchor.transform.position + yOffset, rotation, _arController.ARAnchor.transform);
-                    Instantiate<GameObject>(PlanePrefab, _arController.ARAnchor.transform.position, Quaternion.identity, _arController.ARAnchor.transform);
-
-                    //create anchor and attach pinata and floor            
-                    //pinata.transform.parent = _arController.ARAnchor.transform;
-                    //plane.transform.parent = _arController.ARAnchor.transform;
+                    GameObject dummy = new GameObject();
+                    dummy.name = "dummy";
+                    Transform anchorTransform = dummy.transform;
+                    
+                    if(_arController.ARAnchor != null)
+                    {
+                        anchorTransform = _arController.ARAnchor.transform;
+                    }
+                    GameObject pinata = Instantiate<GameObject>(PinataPrefab, anchorTransform.position + yOffset, rotation, anchorTransform.transform);
+                    Instantiate<GameObject>(PlanePrefab, anchorTransform.position, Quaternion.identity, anchorTransform.transform);
 
                     _pinataController = pinata.GetComponentInChildren<PinataController>();
 
-                    _menu.RestartButtonInstance.SetActive(true);
-                    _menu.ToolsUIInstance.SetActive(true);
-                    _menu.SelectTool((int)GameController.PlayerTool.Bate);
-                    //start timer
-                    _timerController.TimerOn = true;
+                  
                 }
+
+                _menu.RestartButtonInstance.SetActive(true);
+                _menu.ToolsUIInstance.SetActive(true);
+                _menu.GameOverMenuInstance.SetActive(false);
+                _menu.SelectTool((int)GameController.PlayerTool.Bate);
+                //start timer
+                _timerController.TimerOn = true;
+
+                _state = GameState.Playing;
 
             }
             else if (value == GameState.Broken)
             {
-                //stop timer
-                //_timerController.TimerOn = false;
-                //if (PlaneGenerator != null)
-                //{
-                //    PlaneGenerator.SetActive(true);
-                //    PointCloud.SetActive(true);
-                //}
-                //menu.RestartButton.SetActive(false);
-                //menu.ToolsMenu.SetActive(false);
-                //menu.SelectTool((int)GameController.PlayerTool.Hand);
+                _state = GameState.Broken;
             }
             else if (value == GameState.GameOver)
             {
@@ -115,9 +140,12 @@ public class GameController : MonoBehaviour
                 _menu.ToolsUIInstance.SetActive(false);
                 _menu.GameOverMenuInstance.SetActive(true);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
+
+                _state = GameState.GameOver;
             }
 
-            _state = value;
+           
+            
 
         }
     }
@@ -160,8 +188,21 @@ public class GameController : MonoBehaviour
         _arController = GetComponent<ARController>();
 
         Tool = PlayerTool.Hand;
-        State = GameState.EntryMenu;
+        State = GameState.MainMenu;
         AddScore(0);
+    }
+
+    private void Update()
+    {
+        if (State == GameState.SearchingFloor && _arController.HasPlaneDetected)
+            State = GameState.Ready;
+        else if (State >= GameState.Ready && !_arController.HasPlaneDetected)
+            State = GameState.SearchingFloor;
+
+        if (Input.GetKeyDown("a"))
+            State = GameState.Playing;
+        if (Input.GetKeyDown("b"))
+            State = GameState.Broken;
     }
 
     public void ChoosePlayerTool(PlayerTool tool)
@@ -189,21 +230,38 @@ public class GameController : MonoBehaviour
         _candyController.SpawnCandy(amount, position, spread);
     }
 
-    public void RestartPinata()
+    public void RestartPlay()
     {
-        if (State != GameState.SearchingFloor)
+    
+        if (_arController.HasPlaneDetected)
         {
-            _pinataController.Restart();
-            _candyController.DestroyCandies();
+            State = GameState.Playing;            
         }
+        else
+        {
+            State = GameState.SearchingFloor;
+        }
+        
+
     }
 
-    public void StartPlay()
-    {
-        State = GameState.SearchingFloor;
-        //menu.EntryMenu.GetComponent<Animator>().SetBool("Fade", false);
-        //menu.EntryMenu.GetComponent<Animator>().Play("fade_menu");
-    }
+    //public void RestartPinata()
+    //{
+    //    if (State != GameState.SearchingFloor)
+    //    {
+    //        _pinataController.Restart();
+    //        _candyController.DestroyCandies();
+    //    }
+    //}
+
+    //public void StartSearch()
+    //{
+    //    _timerController.Timer = ConstantHelper.PLAY_TIME;
+    //    _timerController.TimerOn = false;
+    //    if(_pinataController != null)
+    //        _pinataController.Restart();
+    //    _candyController.DestroyCandies();
+    //}
 
 
     public void AddScore(float score)
