@@ -1,7 +1,7 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!65 &5941021550051773164
-BoxCollider:
+--- !u!136 &2702644527790708282
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -10,9 +10,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.096755005, y: 0.09723, z: 0.04295}
-  m_Center: {x: 0.10194251, y: 0.0011950005, z: 0.021860002}
+  m_Radius: 0.065133005
+  m_Height: 0.19599983
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.000000033527613, z: -0.0061536916}
 --- !u!1001 &1238113536360433878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -72,14 +73,15 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4300000, guid: 0d47849fa76524a4ab9e2a1627dbbff2, type: 3}
+      objectReference: {fileID: 4300000, guid: 7bd85cb089829a24f8add893d88279da, type: 3}
     - target: {fileID: 23760597697133772, guid: f29ca0bf9cd35b549978e8d6f027222e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4a1ded40aefc833409e0d0c4049d7a55, type: 2}
+      objectReference: {fileID: 2100000, guid: c0a0e259e0eace94d8dfd67588843ec2, type: 2}
     m_RemovedComponents:
     - {fileID: 3792697067656539628, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 3}
+    - {fileID: 3229132828950451706, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f29ca0bf9cd35b549978e8d6f027222e, type: 3}
 --- !u!1 &1237187490649600166 stripped
 GameObject:

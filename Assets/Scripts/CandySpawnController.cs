@@ -28,16 +28,19 @@ public class CandySpawnController : MonoBehaviour {
             }        
     }
 
-    public void SpawnBadCandy(int amount, Vector3 position, float spread)
+    public void SpawnStarCandy(int amount, float spread, GameObject player)
     {
 
         for (int i = 0; i < amount; i++)
         {
             //distribute candies over the floor
             Vector3 pos = Random.insideUnitCircle * spread;
-            position.x += pos.x;
-            position.z += pos.y;
-            GameObject c = Instantiate<GameObject>(BadCandy, position, Quaternion.identity);
+            pos.x += player.transform.position.x;
+            pos.z += player.transform.position.y;
+            GameObject c = Instantiate<GameObject>(StarCandy, pos, Quaternion.identity);
+            StarCandyController controller = c.GetComponent<StarCandyController>();
+            controller.PlayerInstance = player;            
+
             _candyInstanceList.Add(c);
         }
     }

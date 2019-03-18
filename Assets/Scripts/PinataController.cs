@@ -40,6 +40,7 @@ public class PinataController : MonoBehaviour
         Destroy(t.gameObject);        
         //instantiate candies
         GameController.Instance.SpawnCandy(20, transform.position, 0.66f);
+        GameController.Instance.SpawnStarCandy(2, 0.66f);
     }
 
     private void OnTriggerEnter(Collider other)

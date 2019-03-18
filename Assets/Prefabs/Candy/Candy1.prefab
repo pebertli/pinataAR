@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 23760597697133772}
   - component: {fileID: 54576954169935620}
   - component: {fileID: 114486838516462168}
-  - component: {fileID: 3792697067656539628}
+  - component: {fileID: 3229132828950451706}
   m_Layer: 10
   m_Name: Candy1
   m_TagString: Candy
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1678697948264560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.673, y: 0, z: -0.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678697948264560}
-  m_Mesh: {fileID: 4300000, guid: 128503536b1c6d743b87f9ed9bc08cb8, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 27501651f2f4c824890b894efe10a5dc, type: 3}
 --- !u!23 &23760597697133772
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -110,8 +110,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TextBonusPrefab: {fileID: 1051266638559350, guid: 8f27acde1d1cac54f84485ee8e5ac009,
     type: 3}
+  CollectParticlePrefab: {fileID: 6074773835782804468, guid: 863fabcf6b2587c4c9835a491e66f241,
+    type: 3}
   Points: 10
---- !u!65 &3792697067656539628
+--- !u!65 &3229132828950451706
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,5 +124,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.092400014, y: 0.02520002, z: 0.092400014}
-  m_Center: {x: 0.0000000018626451, y: 0.012693606, z: -0.0000000018626451}
+  m_Size: {x: 0.1622601, y: 0.16226009, z: 0.038327105}
+  m_Center: {x: 0.0008562878, y: 0.0013168156, z: 0}

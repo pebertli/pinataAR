@@ -63,6 +63,8 @@ public class GameController : MonoBehaviour
                         _pinataController.Restart();
                     _candyController.DestroyCandies();
 
+                    _arController.CleanAnchor();
+
                     _timerController.TimerOn = false;
                     PlaneGeneratorInstance.SetActive(true);
                     PointCloudInstance.SetActive(true);
@@ -78,11 +80,13 @@ public class GameController : MonoBehaviour
                 else
                 {
                     _state = GameState.SearchingFloor;
+                    _arController.GenerateAnchor();
                     State = GameState.Ready;
                 }
             }
             if (value == GameState.Ready)
             {
+                _arController.GenerateAnchor();
                 _state = GameState.Ready;
                 State = GameState.Playing;
             }
@@ -94,7 +98,7 @@ public class GameController : MonoBehaviour
                 {
                     _pinataController.Restart();
                 }
-                else if (_pinataController == null)
+                else if (_pinataController == null && _arController.ARAnchor != null)
                 {
                     _menu.SnackBarInstance.SetActive(false);
                     //hide AR plane visual helpers
@@ -108,18 +112,17 @@ public class GameController : MonoBehaviour
                     //instancing pinata and invisible floor
                     //how high is the pinata?
                     Vector3 yOffset = new Vector3(0, CameraInstance.transform.position.y + 2f, 0);
-                    GameObject dummy = new GameObject();
-                    dummy.name = "dummy";
-                    Transform anchorTransform = dummy.transform;
+                    //GameObject dummy = new GameObject();
+                    //dummy.name = "dummy";
+                    //Transform anchorTransform = dummy.transform;
 
-                    if (_arController.ARAnchor != null)
-                    {
-                        anchorTransform = _arController.ARAnchor.transform;
-                    }
-                    GameObject pinata = Instantiate<GameObject>(PinataPrefab, anchorTransform.position + yOffset, rotation, anchorTransform.transform);
-                    Instantiate<GameObject>(PlanePrefab, anchorTransform.position, Quaternion.identity, anchorTransform.transform);
+                        Transform anchorTransform = _arController.ARAnchor.transform;
+                        GameObject pinata = Instantiate<GameObject>(PinataPrefab, anchorTransform.position + yOffset, rotation, anchorTransform.transform);
+                        Instantiate<GameObject>(PlanePrefab, anchorTransform.position, Quaternion.identity, anchorTransform.transform);
+                        _pinataController = pinata.GetComponentInChildren<PinataController>();
+                    
 
-                    _pinataController = pinata.GetComponentInChildren<PinataController>();
+                    
                 }
 
                 _timerController.TimerOn = true;
@@ -241,6 +244,11 @@ public class GameController : MonoBehaviour
     public void SpawnCandy(int amount, Vector3 position, float spread)
     {
         _candyController.SpawnCandy(amount, position, spread);        
+    }
+
+    public void SpawnStarCandy(int amount, float spread)
+    {
+        _candyController.SpawnStarCandy(amount, spread, PlayerController.gameObject);
     }
 
     public void AddScore(float score)

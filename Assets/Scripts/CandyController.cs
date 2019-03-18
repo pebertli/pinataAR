@@ -8,6 +8,7 @@ public class CandyController : MonoBehaviour {
     TextMeshPro _text;
 
     public GameObject TextBonusPrefab;
+    public GameObject CollectParticlePrefab;
     public int Points;
 
 
@@ -26,7 +27,8 @@ public class CandyController : MonoBehaviour {
         var lookPos = transform.position - Camera.main.transform.position ;
         lookPos.y = 0;
         var rotation = Quaternion.LookRotation(lookPos);
-        
+
+        Instantiate<GameObject>(CollectParticlePrefab, transform.position, Quaternion.identity);
         GameObject g = Instantiate<GameObject>(TextBonusPrefab, transform.position, rotation);
         _text = g.GetComponentInChildren<TextMeshPro>();
         _text.SetText(((int) Points).ToString());

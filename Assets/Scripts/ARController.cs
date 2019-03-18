@@ -53,7 +53,7 @@ public class ARController : MonoBehaviour
                 if (_arPlane == null)
                 {
                     _arPlane = _allPlanes[i];                    
-                    GenerateAnchor();
+                    //GenerateAnchor();
                 }
                 HasPlaneDetected = true;
                 //a plane was detected, so there is no need to iterate more               
@@ -61,7 +61,7 @@ public class ARController : MonoBehaviour
             }
             if(i == _allPlanes.Count-1)//last
             {
-                CleanAnchor();
+                //CleanAnchor();
                 HasPlaneDetected = false;
             }
         }
@@ -122,7 +122,9 @@ public class ARController : MonoBehaviour
 
     public void GenerateAnchor()
     {
-            //get all anchors in the detected floor
+        //get all anchors in the detected floor
+        if (ARAnchor == null)
+        {
             List<Anchor> anchorList = new List<Anchor>();
             _arPlane.GetAllAnchors(anchorList);
             //set an anchor post
@@ -130,6 +132,7 @@ public class ARController : MonoBehaviour
             pose.position = _arPlane.CenterPose.position;
             pose.rotation = Quaternion.identity;
             ARAnchor = _arPlane.CreateAnchor(pose);
+        }
     }
 
 

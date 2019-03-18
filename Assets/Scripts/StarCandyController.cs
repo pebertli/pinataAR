@@ -5,7 +5,6 @@ using UnityEngine;
 public class StarCandyController : MonoBehaviour {
 
     public GameObject PlayerInstance;
-    public GameObject FloorInstance;
     public int MaxPick = 3;
 
     Vector3 _nextPosition;
@@ -32,6 +31,9 @@ public class StarCandyController : MonoBehaviour {
                 _animator.SetTrigger("lala");
 
         }
+
+        if (PlayerInstance == null)
+            return;
 
         if (!_moving)
         {
