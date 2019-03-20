@@ -4,11 +4,18 @@ using TMPro;
 
 public class CandyController : MonoBehaviour {
 
+    public enum CandyType
+    {
+        Regular = 0,
+        Splash
+    }
+
     Renderer _render;
     TextMeshPro _text;
 
     public GameObject TextBonusPrefab;
     public GameObject CollectParticlePrefab;
+    public CandyType Type;
     public int Points;
 
 
@@ -18,23 +25,7 @@ public class CandyController : MonoBehaviour {
         _render = GetComponent<Renderer>();        
 	}
 
-    public void Destroy()
-    {
-        StartCoroutine("Fade");
-
-        //show score earned with this candy
-        //billboard
-        var lookPos = transform.position - Camera.main.transform.position ;
-        lookPos.y = 0;
-        var rotation = Quaternion.LookRotation(lookPos);
-
-        Instantiate<GameObject>(CollectParticlePrefab, transform.position, Quaternion.identity);
-        GameObject g = Instantiate<GameObject>(TextBonusPrefab, transform.position, rotation);
-        _text = g.GetComponentInChildren<TextMeshPro>();
-        _text.SetText(((int) Points).ToString());
-    }
-
-    IEnumerator Fade()
+    IEnumerator Fade(bool destroy)
     {
         for (float f = 1f; f >= 0; f -= 0.1f)
         {
@@ -43,7 +34,38 @@ public class CandyController : MonoBehaviour {
             _render.material.color = c;
             yield return new WaitForSeconds(.01f);
         }
+        if(destroy)
+            Destroy(gameObject);
+    }
 
-        Destroy(gameObject);
+    public void Hit()
+    {
+        if (Type == CandyType.Splash)
+        {
+            ActivateSplash(7);
+            StartCoroutine("Fade", true);
+        }
+        else if (Type == CandyType.Regular)
+        {
+
+            StartCoroutine("Fade", true);
+
+            //show score earned with this candy
+            //billboard
+            var lookPos = transform.position - Camera.main.transform.position;
+            lookPos.y = 0;
+            var rotation = Quaternion.LookRotation(lookPos);
+
+            Instantiate<GameObject>(CollectParticlePrefab, transform.position, Quaternion.identity);
+            GameObject g = Instantiate<GameObject>(TextBonusPrefab, transform.position, rotation);
+            _text = g.GetComponentInChildren<TextMeshPro>();
+            _text.SetText(((int)Points).ToString());
+        }
+    }
+
+    private void ActivateSplash(int amount)
+    {
+        SplatController splatController = GameController.Instance.gameObject.GetComponent<SplatController>();
+        splatController.DoSplash(amount);
     }
 }

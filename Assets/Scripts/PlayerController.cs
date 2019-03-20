@@ -85,14 +85,14 @@ public class PlayerController : MonoBehaviour
                         CandyController c = hit.transform.gameObject.GetComponent<CandyController>();
                         //got a candy
                         GameController.Instance.AddScore(c.Points);
-                        c.Destroy();
+                        c.Hit();
                     }
                     else if (hit.transform.gameObject.CompareTag("StarCandy"))
                         //got a star
                         hit.transform.gameObject.GetComponent<StarCandyController>().Damage(1);
-                    else if (hit.transform.gameObject.CompareTag("BadCandy"))
-                        //EventManager.TriggerEvent("Activate" + hit.transform.gameObject.name);
-                        hit.transform.gameObject.GetComponent<BadCandyController>().Activate();
+                //    else if (hit.transform.gameObject.CompareTag("BadCandy"))
+                //        //EventManager.TriggerEvent("Activate" + hit.transform.gameObject.name);
+                //        hit.transform.gameObject.GetComponent<BadCandyController>().Activate();
 
                 }
             }
