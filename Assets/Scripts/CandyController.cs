@@ -15,6 +15,7 @@ public class CandyController : MonoBehaviour {
 
     public GameObject TextBonusPrefab;
     public GameObject CollectParticlePrefab;
+    public GameObject StinkParticlePrefab;
     public CandyType Type;
     public int Points;
 
@@ -22,7 +23,9 @@ public class CandyController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        _render = GetComponent<Renderer>();        
+        _render = GetComponent<Renderer>();
+        if (Type == CandyType.Splash)
+            Instantiate(StinkParticlePrefab, this.transform);
 	}
 
     IEnumerator Fade(bool destroy)

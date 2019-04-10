@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class StarCandyController : MonoBehaviour {
 
+    [HideInInspector]
     public GameObject PlayerInstance;
     public int MaxPick = 3;
 

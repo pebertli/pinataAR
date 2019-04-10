@@ -51,6 +51,7 @@ public class GameController : MonoBehaviour
                 _menu.GameOverMenuInstance.SetActive(false);
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
+                _menu.HUDInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                 _state = GameState.MainMenu;
@@ -73,6 +74,7 @@ public class GameController : MonoBehaviour
                     _menu.GameOverMenuInstance.SetActive(false);
                     _menu.RestartButtonInstance.SetActive(false);
                     _menu.ToolsUIInstance.SetActive(false);
+                    _menu.HUDInstance.SetActive(false);
                     _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                     _state = GameState.SearchingFloor;
@@ -134,6 +136,7 @@ public class GameController : MonoBehaviour
                 _menu.GameOverMenuInstance.SetActive(false);
                 _menu.RestartButtonInstance.SetActive(true);
                 _menu.ToolsUIInstance.SetActive(true);
+                _menu.HUDInstance.SetActive(true);
                 _menu.SelectTool((int)GameController.PlayerTool.Bate);
 
                 _state = GameState.Playing;
@@ -155,6 +158,7 @@ public class GameController : MonoBehaviour
                 _menu.GameOverMenuInstance.SetActive(true);
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
+                _menu.HUDInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                 _state = GameState.GameOver;
@@ -210,6 +214,12 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
+        //if (State >= GameState.GameOver)
+        //{
+        //    if (!_arController.HasPlaneDetected)
+        //        State = GameState.SearchingFloor;
+        //}
+
         if (State == GameState.SearchingFloor && _arController.HasPlaneDetected)
             State = GameState.Ready;
         else if (State >= GameState.Ready && !_arController.HasPlaneDetected)
@@ -246,9 +256,9 @@ public class GameController : MonoBehaviour
         _candyController.SpawnCandy(amount, position, spread);        
     }
 
-    public void SpawnStarCandy(int amount, float spread)
+    public void SpawnStarCandy(float spread)
     {
-        _candyController.SpawnStarCandy(amount, spread, PlayerController.gameObject);
+        _candyController.SpawnStarCandy(spread, PlayerController.gameObject);
     }
 
     public void AddScore(float score)

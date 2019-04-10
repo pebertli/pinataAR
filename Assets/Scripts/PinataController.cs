@@ -39,8 +39,8 @@ public class PinataController : MonoBehaviour
         //remove the original/unharmed pinata
         Destroy(t.gameObject);        
         //instantiate candies
-        GameController.Instance.SpawnCandy(20, transform.position, 0.66f);
-        GameController.Instance.SpawnStarCandy(2, 0.66f);
+        GameController.Instance.SpawnCandy(20, transform.position, ConstantHelper.CANDY_SPREAD_POSITION_RANGE);
+        GameController.Instance.SpawnStarCandy(ConstantHelper.CANDY_SPREAD_POSITION_RANGE);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -74,7 +74,6 @@ public class PinataController : MonoBehaviour
             foreach (GameObject g in _brokenPinataInstance)
                 Destroy(g);
         }
-
 
         _health = ConstantHelper.HEALTH_PINATA;
     }

@@ -32,6 +32,9 @@ namespace GoogleARCore
     [HelpURL("https://developers.google.com/ar/reference/unity/class/GoogleARCore/EnvironmentalLight")]
     public class EnvironmentalLight : MonoBehaviour
     {
+
+        public Light MainLight;
+
         /// <summary>
         /// Unity update method that sets global light estimation shader constant to match
         /// ARCore's calculated values.
@@ -56,9 +59,14 @@ namespace GoogleARCore
                 return;
             }
 
+            
             // Normalize pixel intensity by middle gray in gamma space.
             const float middleGray = 0.466f;
             float normalizedIntensity = Frame.LightEstimate.PixelIntensity / middleGray;
+
+            if (MainLight)
+                MainLight.intensity = normalizedIntensity;
+
 
             // Apply color correction along with normalized pixel intensity in gamma space.
             Shader.SetGlobalColor("_GlobalColorCorrection", Frame.LightEstimate.ColorCorrection * normalizedIntensity);

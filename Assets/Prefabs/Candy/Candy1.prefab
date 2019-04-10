@@ -112,6 +112,9 @@ MonoBehaviour:
     type: 3}
   CollectParticlePrefab: {fileID: 6074773835782804468, guid: 863fabcf6b2587c4c9835a491e66f241,
     type: 3}
+  StinkParticlePrefab: {fileID: 2045824623630120749, guid: 0cfc1fde70ed04a47b1c2513542aa037,
+    type: 3}
+  Type: 0
   Points: 10
 --- !u!65 &3229132828950451706
 BoxCollider:

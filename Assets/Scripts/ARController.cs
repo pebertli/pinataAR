@@ -32,8 +32,7 @@ public class ARController : MonoBehaviour
     {
         _UpdateApplicationLifecycle();
 
-        if (GameController.Instance.State == GameController.GameState.GameOver
-            || GameController.Instance.State == GameController.GameState.MainMenu)
+        if (GameController.Instance.State == GameController.GameState.MainMenu)
             return;
 
         //Get all planes deteted by ARCore engine

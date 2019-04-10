@@ -22,20 +22,20 @@ public class CandySpawnController : MonoBehaviour {
                 //choose a candy
                 int r = Random.Range(0, CandyPrefabList.Length);
                 GameObject c = Instantiate<GameObject>(CandyPrefabList[r], position, Quaternion.identity);
-                float badRate = Random.Range(0, 1);
+                float badRate = Random.Range(0f, 1f);
             if (badRate <= ConstantHelper.BAD_CANDY_RATE)
+            {
                 ((CandyController)c.GetComponent<CandyController>()).Type = CandyController.CandyType.Splash;
+                ((CandyController)c.GetComponent<CandyController>()).Points = 0;
+            }
             _candyInstanceList.Add(c);
                 //add a force to simulate the inertia of the hit
                 //c.GetComponent<Rigidbody>().AddForce(new Vector3(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2)), ForceMode.Impulse);
             }        
     }
 
-    public void SpawnStarCandy(int amount, float spread, GameObject player)
+    public void SpawnStarCandy(float spread, GameObject player)
     {
-
-        for (int i = 0; i < amount; i++)
-        {
             //distribute candies over the floor
             Vector3 pos = Random.insideUnitCircle * spread;
             pos.x += player.transform.position.x;
@@ -45,7 +45,6 @@ public class CandySpawnController : MonoBehaviour {
             controller.PlayerInstance = player;            
 
             _candyInstanceList.Add(c);
-        }
     }
 
     public void DestroyCandies()

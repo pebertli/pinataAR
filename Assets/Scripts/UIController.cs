@@ -4,6 +4,7 @@ public class UIController : MonoBehaviour {
 
     public GameObject RestartButtonInstance;
     public GameObject ToolsUIInstance;
+    public GameObject HUDInstance;
     public GameObject EntryMenuInstance;
     public GameObject GameOverMenuInstance;
     public GameObject TimerUIInstance;
