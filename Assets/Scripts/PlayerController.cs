@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private const float _attackDelayConstant = 0.2f;
 
     private Animator _anim;
+    private AudioSource _audio;
     private float _attackDelay = 0.2f;
     private float _attackCooldown = 0f;
     private bool _attacking = false;
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _anim = this.GetComponentInChildren<Animator>();
+        _audio = this.GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
             return;
 
         //attack or collect candies
-        if (GameController.Instance.Tool == GameController.PlayerTool.Bate)
+        //if (GameController.Instance.Tool == GameController.PlayerTool.Bate)
         {
             //simulate time to get ready to another hit
             if (_attackCooldown > 0)
@@ -56,6 +58,8 @@ public class PlayerController : MonoBehaviour
                 //choose an animation randomly
                 int attackAnimation = Random.Range(1, 4);
                 _anim.SetTrigger("attack" + attackAnimation);
+                _audio.pitch = Random.Range(0f, 3f);
+                _audio.PlayDelayed(0.25f);
             }
 
             if (_attacking)
@@ -71,7 +75,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        else if (GameController.Instance.Tool == GameController.PlayerTool.Hand)
+        //else if (GameController.Instance.Tool == GameController.PlayerTool.Hand)
         {
             if (Input.GetMouseButtonDown(0))
             {

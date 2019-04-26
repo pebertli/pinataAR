@@ -10,7 +10,11 @@ public class PinataController : MonoBehaviour
     public GameObject BrokenPinataPrefab;
     public GameObject HitParticlePrefab;
 
+    public AudioClip audioCLipHit;
+    public AudioClip audioClipDie;
+
     private Rigidbody _rigidBody;
+    private AudioSource _audioHit;
     private int _health = ConstantHelper.HEALTH_PINATA;
     private GameObject[] _brokenPinataInstance;
 
@@ -18,6 +22,7 @@ public class PinataController : MonoBehaviour
     void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _audioHit = GetComponent<AudioSource>();
     }
 
     private void Die()
@@ -36,6 +41,9 @@ public class PinataController : MonoBehaviour
             i--;
         }
 
+        _audioHit.clip = audioClipDie;
+        _audioHit.pitch = Random.Range(0f, 3f);
+        _audioHit.Play();
         //remove the original/unharmed pinata
         Destroy(t.gameObject);        
         //instantiate candies
@@ -53,6 +61,9 @@ public class PinataController : MonoBehaviour
                 return;
             _health -= ConstantHelper.HIT_DAMAGE;
 
+            _audioHit.clip = audioCLipHit;
+            _audioHit.pitch = Random.Range(0f, 3f);
+            _audioHit.Play();
             Instantiate<GameObject>(HitParticlePrefab, other.ClosestPointOnBounds(transform.position), transform.rotation);
             if (_health <= 0)
             {
