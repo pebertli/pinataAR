@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ParticleColor : MonoBehaviour {
 
+    public bool Infinite = false;
+
     ParticleSystem.MainModule _particle;
     float _maxTime;
     // Use this for initialization
@@ -15,11 +17,19 @@ public class ParticleColor : MonoBehaviour {
 	// Update is called once per frame
 	void LateUpdate () {
 
-        if (_maxTime > 0)
+        if (!Infinite)
         {
-            //randomize the single particle color
-            _particle.startColor = Color.HSVToRGB(Random.Range(0f, 1f), 1, 1);
-            _maxTime -= Time.deltaTime;
+            if (_maxTime > 0)
+            {
+                //randomize the single particle color
+                _particle.startColor = Color.HSVToRGB(Random.Range(0f, 1f), 1, 1);
+                _maxTime -= Time.deltaTime;
+            }
         }
+        else
+        {
+            _particle.startColor = Color.HSVToRGB(Random.Range(0f, 1f), 1, 1);            
+        }
+
     }
 }

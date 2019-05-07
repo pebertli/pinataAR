@@ -40,6 +40,8 @@ public class TimerController : MonoBehaviour {
         {
             TimerOn = false;           
             GameController.Instance.State = GameController.GameState.GameOver;
+
+            GameController.Instance.UpdateTimer(Timer);
         }
             
     }

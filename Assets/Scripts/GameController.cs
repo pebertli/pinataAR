@@ -265,10 +265,16 @@ public class GameController : MonoBehaviour
     {
         _score += score;
         _menu.ScoreUIInstance.GetComponent<TMPro.TextMeshProUGUI>().SetText("Points: "+_score);
+        _menu.HUDInstance.GetComponent<Animator>().SetTrigger("ScoreTrigger");
+        _menu.HUDInstance.transform.Find("ScoreText").GetComponent<AudioSource>().Play();
     }
 
     public void UpdateTimer(float time)
     {
+        if(time <= 0)
+        {
+            _menu.HUDInstance.transform.Find("TimeText").GetComponent<AudioSource>().Play();
+        }
         _menu.TimerUIInstance.GetComponent<TMPro.TextMeshProUGUI>().SetText(Util.FormatTimer(time));   
     }
 }
