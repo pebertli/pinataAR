@@ -52,6 +52,7 @@ public class GameController : MonoBehaviour
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
                 _menu.HUDInstance.SetActive(false);
+                InitialParticleInstance.SetActive(true);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                 _state = GameState.MainMenu;
@@ -75,6 +76,7 @@ public class GameController : MonoBehaviour
                     _menu.RestartButtonInstance.SetActive(false);
                     _menu.ToolsUIInstance.SetActive(false);
                     _menu.HUDInstance.SetActive(false);
+                    InitialParticleInstance.SetActive(false);
                     _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                     _state = GameState.SearchingFloor;
@@ -137,6 +139,7 @@ public class GameController : MonoBehaviour
                 _menu.RestartButtonInstance.SetActive(true);
                 _menu.ToolsUIInstance.SetActive(true);
                 _menu.HUDInstance.SetActive(true);
+                InitialParticleInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Bate);
 
                 _state = GameState.Playing;
@@ -159,6 +162,7 @@ public class GameController : MonoBehaviour
                 _menu.RestartButtonInstance.SetActive(false);
                 _menu.ToolsUIInstance.SetActive(false);
                 _menu.HUDInstance.SetActive(false);
+                InitialParticleInstance.SetActive(false);
                 _menu.SelectTool((int)GameController.PlayerTool.Hand);
 
                 _state = GameState.GameOver;
@@ -178,6 +182,7 @@ public class GameController : MonoBehaviour
     public GameObject CameraInstance;
     public GameObject PlaneGeneratorInstance;
     public GameObject PointCloudInstance;
+    public GameObject InitialParticleInstance;
 
     private UIController _menu;
     private CandySpawnController _candyController;    
